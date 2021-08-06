@@ -1,11 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 var {Client}=require("pg");
 var client=new Client({
-	user:"postgres",
-	host:"13.124.176.157",
-	database:"test",
-	password:"123456",
-	port:"5432"
+	user:process.env.db_user,
+	host:process.env.db_host,
+	database:process.env.db_name,
+	password:process.env.db_password,
+	port:process.env.db_port
 });
 export default async function handler(req, res) {
 	var q1="select * from member;";

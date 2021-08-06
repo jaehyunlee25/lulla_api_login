@@ -7,7 +7,7 @@ var client=new Client({
 	password:"123456",
 	port:"5432"
 });
-export default aync function handler(req, res) {
+export default async function handler(req, res) {
 	var q1="select * from member;";
 	var data=await getData();
 	res.status(200).json({ name: 'member' });

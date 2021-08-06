@@ -7,6 +7,7 @@ var client=new Client({
 	password:process.env.db_password,
 	port:process.env.db_port
 });
+console.dir(client);
 export default async function handler(req, res) {
 	var q1="select * from member;";
 	var data=await getData();
@@ -20,7 +21,7 @@ function getData(){
 			q1,
 			(err,res)=>{
 				if(err){
-					dir(err);
+					console.dir(err);
 					return;
 				}		
 				resolve(res);

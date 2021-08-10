@@ -4,6 +4,7 @@ export default async function handler(req,res){
 	//console.log(res);
 	res.writeHead(200,{
 		"Access-Control-Allow-Origin":"*",
+		"Content-type":"application/json",
 		"Access-Control-Allow-Methods":"POST"
 	});
 	res.end("{'msg':'hello'}");

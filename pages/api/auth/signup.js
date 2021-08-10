@@ -2,8 +2,12 @@ import getData from "/lib/pgConn";
 export default async function handler(req,res){
 	//cors 해제
 	console.log(res);
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	res.writeHead(200,{
+		"Access-Control-Allow-Origin":"*",
+		"Access-Control-Allow-Headers":"X-Requested-With"
+	});
+	/* res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "X-Requested-With"); */
 	
 	/* if(req.method!="POST"){
 		res.status(200).json({result:"fail",reason:"not proper method"});

@@ -4,7 +4,7 @@ import styles from '../styles/Home.module.css'
 
 export default function Home() {
   return (
-	<button onClick={console.log(11);}>POST</button>
+	<button onClick={console.log(11)}>POST</button>
     <div className={styles.container}>
       <Head>
         <title>Create Next App</title>

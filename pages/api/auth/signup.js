@@ -6,6 +6,7 @@ export default async function handler(req,res){
 		"Access-Control-Allow-Origin":"*",
 		"Access-Control-Allow-Headers":"X-Requested-With"
 	});
+	res.end("hello");
 	/* res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "X-Requested-With"); */
 	
@@ -13,7 +14,7 @@ export default async function handler(req,res){
 		res.status(200).json({result:"fail",reason:"not proper method"});
 		return;
 	} */
-	const q1="select * from member;";
+	/* const q1="select * from member;";
 	let data=await getData(q1);
-	res.status(200).json(data);
+	res.status(200).json(data); */
 };

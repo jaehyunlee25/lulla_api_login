@@ -1,13 +1,13 @@
 import getData from "/lib/pgConn";
 export default async function handler(req,res){
 	//cors 해제
-	console.log(res);
+	//console.log(res);
 	res.writeHead(200,{
 		"Access-Control-Allow-Origin":"*",
 		"Access-Control-Allow-Methods":"POST",
 		"Access-Control-Allow-Headers":"X-Requested-With"
 	});
-	res.end("hello");
+	res.end("{'msg':'hello'}");
 	/* res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "X-Requested-With"); */
 	

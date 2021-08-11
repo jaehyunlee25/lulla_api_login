@@ -22,6 +22,6 @@ export default async function handler(req,res){
 	var result=await getData("select * from users where phone='"+user_info.phone+"' and activated=false;");
 	
 	//#3. data return
-	res.end(JSON.stringify({}));		
+	res.end(JSON.stringify(result));		
 	
 };

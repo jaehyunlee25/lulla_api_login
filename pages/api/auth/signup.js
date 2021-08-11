@@ -12,7 +12,10 @@ export default async function handler(req,res){
 	
 	//#2. operation
 	/* const q1="select * from member;";
-	let data=await getData(q1); */	
+	let data=await getData(q1); */
+	
+	console.log(req.body);
+	
 	var data=JSON.parse(req.body),
 		user_info=data.user_info,
 		temporary;

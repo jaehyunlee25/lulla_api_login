@@ -32,7 +32,7 @@ export default async function handler(req,res){
 			sets=Object.keys(obj).map(key=>[key,"='",obj[key],"'"].join("")),
 			sql="update users set "+sets.join(",")+" where id='"+wasUser.id+"';";			
 		
-		var upRes=getData(sql);
+		var upRes=await getData(sql);
 		console.log(upRes);
 	}
 		

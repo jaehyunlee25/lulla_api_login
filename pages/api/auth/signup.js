@@ -14,7 +14,7 @@ export default async function handler(req,res){
 	/* const q1="select * from member;";
 	let data=await getData(q1); */
 	console.log(req);
-	var data=req.body,
+	var data=JSON.parse(req.body),
 		user_info=data.user_info,
 		temporary;
 		

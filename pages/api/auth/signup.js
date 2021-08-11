@@ -19,7 +19,7 @@ export default async function handler(req,res){
 		temporary;
 		
 	var res=getData("select * from users where phone='"+user_info.phone+"' and activated=false;");
-	
+	console.log(res);
 	//#3. data return
 	res.end(JSON.stringify(res));	
 };

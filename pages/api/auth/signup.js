@@ -28,11 +28,10 @@ export default async function handler(req,res){
 		wasUser.activated=true;
 		wasUser.password=user_info.password;
 		wasUser.email=user_info.email;
-		wasUser.updated_at=new Date();
 		
-		var sets=Object.keys(wasUser).map(key=>[key,"='",wasUser[key],"'"].join(""));
+		var sets=["activated","password","email"].map(key=>[key,"='",wasUser[key],"'"].join(""));
 		
-		var sql="update users set "+sets.join(",")+" where id="+wasUser.id+";";
+		var sql="update users set "+sets.join(",")+" where id='"+wasUser.id+"';";
 		console.log(sql);
 		var upRes=getData(sql);
 		

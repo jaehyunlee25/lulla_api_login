@@ -6,9 +6,9 @@ export default async function handler(req,res){
 	
 	//#1. cors 해제
 	res.writeHead(200,{
-		"Access-Control-Allow-Origin":"*",
+		"Access-Control-Allow-Origin":"*",	//for same origin policy
 		"Content-Type":"application/json",
-		"Access-Control-Allow-Headers":"*",
+		"Access-Control-Allow-Headers":"*",	//for application/json 
 		"Access-Control-Allow-Methods":"POST"
 	});
 	
@@ -22,6 +22,20 @@ export default async function handler(req,res){
 		result=await getData("select * from users where phone='"+user_info.phone+"' and activated=false;"),
 		rows=result.rows;
 	
+	if(rows.length>0){
+		var wasUser=rows[0];
+		
+		wasUser.activated=true;
+		wasUser.password=user_info.password;
+		wasUser.email=user_info.email;
+		
+		var sets=Object.keys(wasUser).map(key=>[key,"=",wasUser[key]].join(""));
+		
+		var sql="update users set "+sets.join(",")+" where id="+wasUser.id+";";
+		console.log(sql);
+		
+	}
+		
 	
 	//#2. operation
 	/* const q1="select * from member;";

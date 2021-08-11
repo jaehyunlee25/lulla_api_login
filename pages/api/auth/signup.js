@@ -13,9 +13,13 @@ export default async function handler(req,res){
 	//#2. operation
 	/* const q1="select * from member;";
 	let data=await getData(q1); */
-	console.log(req.body);
 	
+	var data=req.body,
+		user_info=data.user_info,
+		temporary;
+		
+	var res=getData("select * from users where phone='"+user_info.phone+"' and activated=false;");
 	
 	//#3. data return
-	res.end(JSON.stringify(data));	
+	res.end(JSON.stringify(res));	
 };

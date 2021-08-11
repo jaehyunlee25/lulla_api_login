@@ -24,15 +24,14 @@ export default async function handler(req,res){
 	
 	if(rows.length>0){
 		var wasUser=rows[0],
-			obj={
+			updateParams={
 				activated:true,
 				password:user_info.password,
 				email:user_info.email
 			},
 			sets=Object.keys(obj).map(key=>[key,"='",obj[key],"'"].join("")),
-			sql="update users set "+sets.join(",")+" where id='"+wasUser.id+"';";			
-		
-		var upRes=await getData(sql);
+			sql="update users set "+sets.join(",")+" where id='"+wasUser.id+";",
+			upRes=await getData(sql);
 		console.log(upRes);
 	}
 		

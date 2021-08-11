@@ -18,7 +18,7 @@ export default async function handler(req,res){
 		//user_info=JSON.parse(data).user_info,
 		temporary;
 	
-	console.log(data);	
+	console.log(data,data.length);	
 	console.log(JSON.parse(data));
 	
 	//var result=getData("select * from users where phone='"+user_info.phone+"' and activated=false;");

@@ -23,18 +23,17 @@ export default async function handler(req,res){
 		rows=result.rows;
 	
 	if(rows.length>0){
-		var wasUser=rows[0];
+		var wasUser=rows[0],
+			obj={
+				activated:true,
+				password:user_info.password,
+				email:user_info.email
+			},
+			sets=Object.keys(obj).map(key=>[key,"='",obj[key],"'"].join("")),
+			sql="update users set "+sets.join(",")+" where id='"+wasUser.id+"';";			
 		
-		wasUser.activated=true;
-		wasUser.password=user_info.password;
-		wasUser.email=user_info.email;
-		
-		var sets=["activated","password","email"].map(key=>[key,"='",wasUser[key],"'"].join(""));
-		
-		var sql="update users set "+sets.join(",")+" where id='"+wasUser.id+"';";
-		console.log(sql);
 		var upRes=getData(sql);
-		
+		console.log(upRes);
 	}
 		
 	

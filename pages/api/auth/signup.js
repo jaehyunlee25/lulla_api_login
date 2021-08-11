@@ -14,6 +14,9 @@ export default async function handler(req,res){
 	/* const q1="select * from member;";
 	let data=await getData(q1); */
 	
+	//cors의 preflight의 경우 무시한다.
+	if(req.body.length==0) return;
+	
 	var data=req.body,
 		//user_info=JSON.parse(data).user_info,
 		temporary;

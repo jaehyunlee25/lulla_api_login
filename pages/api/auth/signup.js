@@ -13,7 +13,7 @@ export default async function handler(req,res){
 	//#2. operation
 	/* const q1="select * from member;";
 	let data=await getData(q1); */
-	
+	console.log(req);
 	var data=req.body,
 		user_info=data.user_info,
 		temporary;

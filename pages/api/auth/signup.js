@@ -29,7 +29,7 @@ export default async function handler(req,res){
 				password:user_info.password,
 				email:user_info.email
 			},
-			sets=Object.keys(obj).map(key=>[key,"='",obj[key],"'"].join("")),
+			sets=Object.keys(updateParams).map(key=>[key,"='",updateParams[key],"'"].join("")),
 			sql="update users set "+sets.join(",")+" where id='"+wasUser.id+";",
 			upRes=await getData(sql);
 		console.log(upRes);

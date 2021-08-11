@@ -1,11 +1,8 @@
 import getData from "/lib/pgConn";
 export default async function handler(req,res){
 	//회원가입
-	var data=req.body,
-		user_info=JSON.parse(data).user_info,
-		temporary,
-		result=await getData("select * from users where phone='"+user_info.phone+"' and activated=false;"),
-		rows=result.rows;
+	
+	//preflight request 처리
 	
 	//#1. cors 해제
 	res.writeHead(200,{
@@ -15,12 +12,25 @@ export default async function handler(req,res){
 		"Access-Control-Allow-Methods":"POST"
 	});
 	
-	//#2. operation
-	/* const q1="select * from member;";
-	let data=await getData(q1); */
+	if(req.body.length==0){
+		res.end("{}");
+	}else{
+		var data=req.body,
+			user_info=JSON.parse(data).user_info,
+			temporary,
+			result=await getData("select * from users where phone='"+user_info.phone+"' and activated=false;"),
+			rows=result.rows;
+		
+		
+		//#2. operation
+		/* const q1="select * from member;";
+		let data=await getData(q1); */
+		
+		
+		//#3. data return
+		res.end(JSON.stringify(result));		
+		
+	}
 	
-	
-	//#3. data return
-	res.end(JSON.stringify(result));		
 	
 };

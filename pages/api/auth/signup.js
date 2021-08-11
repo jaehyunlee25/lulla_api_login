@@ -13,6 +13,7 @@ export default async function handler(req,res){
 	});
 	
 	if(req.body.length==0){
+		console.log(req);
 		res.end("{}");
 	}else{
 		var data=req.body,

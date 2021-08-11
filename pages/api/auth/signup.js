@@ -15,14 +15,14 @@ export default async function handler(req,res){
 	let data=await getData(q1); */
 	
 	var data=req.body,
-		user_info=data.user_info,
+		//user_info=JSON.parse(data).user_info,
 		temporary;
 	
-	console.log(typeof data);
-	console.log(user_info.phone);
+	console.log(data);	
+	console.log(JSON.parse(data));
 	
-	var result=getData("select * from users where phone='"+user_info.phone+"' and activated=false;");
+	//var result=getData("select * from users where phone='"+user_info.phone+"' and activated=false;");
 	
 	//#3. data return
-	res.end(JSON.stringify(result));	
+	res.end(JSON.stringify({}));	
 };

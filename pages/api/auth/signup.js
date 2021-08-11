@@ -12,26 +12,25 @@ export default async function handler(req,res){
 		"Access-Control-Allow-Methods":"POST"
 	});
 	
-	if(req.body.length==0){
-		console.log(req);
+	//#2. preflight 처리
+	if(req.body.length==0){		
 		res.end("{}");
-	}else{
-		var data=req.body,
-			user_info=JSON.parse(data).user_info,
-			temporary,
-			result=await getData("select * from users where phone='"+user_info.phone+"' and activated=false;"),
-			rows=result.rows;
-		
-		
-		//#2. operation
-		/* const q1="select * from member;";
-		let data=await getData(q1); */
-		
-		
-		//#3. data return
-		res.end(JSON.stringify(result));		
-		
+		return;
 	}
 	
+	//#3. 데이터 처리
+	var data=req.body,
+		user_info=JSON.parse(data).user_info,
+		temporary,
+		result=await getData("select * from users where phone='"+user_info.phone+"' and activated=false;"),
+		rows=result.rows;
 	
+	
+	//#2. operation
+	/* const q1="select * from member;";
+	let data=await getData(q1); */
+	
+	
+	//#3. data return
+	res.end(JSON.stringify(result));
 };

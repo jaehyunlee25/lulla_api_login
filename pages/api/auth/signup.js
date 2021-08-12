@@ -1,17 +1,14 @@
-import getData from "/lib/pgConn";
+import procQuery from "/lib/pgConn";
+import strSQL from "/sqls/auth/signup/test.sql";
 export default async function handler(req,res){
-	//회원가입
-	
-	//preflight request 처리
-	
+	//회원가입	
 	//#1. cors 해제
 	res.writeHead(200,{
 		"Access-Control-Allow-Origin":"*",	//for same origin policy
 		"Content-Type":"application/json",
 		"Access-Control-Allow-Headers":"*",	//for application/json 
 		"Access-Control-Allow-Methods":"POST"
-	});
-	
+	});	
 	//#2. preflight 처리
 	if(req.body.length==0) return res.end("{}");
 	
@@ -19,20 +16,30 @@ export default async function handler(req,res){
 	var data=req.body,
 		user_info=JSON.parse(data).user_info,
 		temporary,
-		result=await getData("select * from users where phone='"+user_info.phone+"' and activated=false;"),
+		wasUsers=await procQuery("select * from users where phone='"+user_info.phone+"' and activated=false;"),
 		rows=result.rows;
 	
-	if(rows.length>0){
-		var wasUser=rows[0],
+	console.log(strSQL);
+	
+	if(rows.length>0){	//기존의 번호인데, 탈퇴한 번호를 재활용
+		var USER,
+			wasUser=wasUsers[0],
 			updateParams={
 				activated:true,
 				password:user_info.password,
-				email:user_info.email
+				email:user_info.email,
+				name:user_info.name
 			},
 			sets=Object.keys(updateParams).map(key=>[key,"='",updateParams[key],"'"].join("")),
-			sql="update users set "+sets.join(",")+" where id='"+wasUser.id+";",
-			upRes=await getData(sql);
-		console.log(upRes);
+			sql="update users set "+sets.join(",")+" where id='"+wasUser.id+"';",
+			updateResult=await procQuery(sql);
+			
+		if(updateResult.type=="success"){
+			USER=updateResult.message;
+			var token=generateToken(USER);
+		}else if(updateResult.type=="error"){
+			USER={type:"error",message:"can't update user!!"};
+		}
 	}
 		
 	
@@ -43,4 +50,17 @@ export default async function handler(req,res){
 	
 	//#3. data return
 	res.end(JSON.stringify(result));
+};
+function generateToken(user){
+	var today=new Date(),
+		exp=new Date(today);
+		
+	exp.setDate(today.getDate()+360);
+	
+	var	param={
+		id:user.id,
+		name:user.name,
+		exp:exp.getTime()/1000
+	};
+	return jwt.sign(param,config.jwt_secret);
 };

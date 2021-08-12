@@ -7,7 +7,7 @@ export default async function handler(req,res){
 	res.writeHead(200,{
 		"Access-Control-Allow-Origin":"*",	//for same origin policy
 		"Content-Type":"application/json",
-		"Access-Control-Allow-Headers":"*",	//for application/json 
+		"Access-Control-Allow-Headers":"application/json",	//for application/json 
 		"Access-Control-Allow-Methods":"POST"
 	});	
 	//#2. preflight 처리
@@ -21,8 +21,6 @@ export default async function handler(req,res){
 	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
 		
 	var	wasUsers=qUsers.message.rows;
-	
-	//console.log(fs.readFileSync("sqls/auth/signup/test.sql","utf8"));
 	
 	if(wasUsers.length>0){	//기존의 번호인데, 탈퇴한 번호를 재활용
 		var USER,
@@ -65,7 +63,7 @@ async function getUser(id){
 };
 function getSql(sqlName,param){
 	var path="sqls/auth/signup/"+sqlName,
-		sql=fs.readFileSync(path,"utf8");	
+		sql=fs.readFileSync(path,"utf8");
 	Object.keys(param).forEach(key=>{
 		var regex=new RegExp("\\$\\{"+key+"\\}","g"),	//백슬래시 두 번, 잊지 말 것!!
 			val=param[key];

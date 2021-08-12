@@ -15,12 +15,12 @@ export default async function handler(req,res){
 	var data=req.body,
 		user_info=JSON.parse(data).user_info,
 		temporary,
-		wasUsers=await procQuery("select * from users where phone='"+user_info.phone+"' and activated=false;"),
-		rows=result.rows;
+		qUsers=await procQuery("select * from users where phone='"+user_info.phone+"' and activated=false;"),
+		wasUsers=qUsers.rows;
 	
 	console.log(fs.readFileSync(strSQL));
 	
-	if(rows.length>0){	//기존의 번호인데, 탈퇴한 번호를 재활용
+	if(wasUsers.length>0){	//기존의 번호인데, 탈퇴한 번호를 재활용
 		var USER,
 			wasUser=wasUsers[0],
 			updateParams={

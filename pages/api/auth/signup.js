@@ -1,4 +1,5 @@
 import procQuery from "/lib/pgConn";
+import fs from "fs";
 export default async function handler(req,res){
 	//회원가입	
 	//#1. cors 해제

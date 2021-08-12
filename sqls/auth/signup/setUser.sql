@@ -1,0 +1,9 @@
+update
+	users
+set
+	activated='${activated}',
+	password='${password}',
+	email='${email}',
+	name='${name}'
+where
+	id='${id}';

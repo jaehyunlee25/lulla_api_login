@@ -20,9 +20,16 @@ export default async function handler(req,res){
 	const salt=randomBytes(32);
 	req.body.user_info.password=await argon2.hash(req.body.user_info.password,{salt});
 	//#3.2. 작업
+	
+	var queries={
+		one:"select * from users where phone='${phone}' and activated=false;"
+	};
+	
+	
 	var data=req.body,
 		user_info=data.user_info,
-		qUsers=await procQuery("select * from users where phone='"+user_info.phone+"' and activated=false;");
+		qstr=getSqlString(queries.one,{phone:user_info.phone});
+		qUsers=await procQuery(qstr);
 		
 	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
 		
@@ -34,10 +41,10 @@ export default async function handler(req,res){
 				activated:true,
 				password:user_info.password,
 				email:user_info.email,
-				name:user_info.name
+				name:user_info.name,
+				id:wasUser.id
 			},
-			sets=Object.keys(updateParams).map(key=>[key,"='",updateParams[key],"'"].join("")),
-			sql="update users set "+sets.join(",")+" where id='"+wasUser.id+"';",
+			sql=getSqlFile("setUser.sql",updateParams);
 			updateResult=await procQuery(sql);
 			
 		if(updateResult.type=="success"){
@@ -45,7 +52,7 @@ export default async function handler(req,res){
 			USER=await getUser(wasUser.id);
 			
 			var token=generateToken(USER),
-				smQueryString=getSql("schoolMember.sql",{user_id:USER.id}),			
+				smQueryString=getSqlFile("getSchoolMember.sql",{user_id:USER.id}),			
 				qSchoolMembers=await procQuery(smQueryString),
 				schoolMembers=qSchoolMembers.message.rows;
 				
@@ -60,13 +67,23 @@ export default async function handler(req,res){
 	}
 };
 async function getUser(id){
-	var sql="select * from users where id='"+id+"';",
+	var sqlTemplate="select * from users where id='${id}';",
+		sql=getSqlString(sqlTemplate,{id:id}),
 		users=await procQuery(sql);	
 	if(users.type=="error") return users;	
 	var user=users.message.rows[0];
 	return user;
 };
-function getSql(sqlName,param){
+function getSqlString(str,param){
+	var sql=str;
+	Object.keys(param).forEach(key=>{
+		var regex=new RegExp("\\$\\{"+key+"\\}","g"),	//백슬래시 두 번, 잊지 말 것!!
+			val=param[key];
+		sql=sql.replace(regex,val);
+	});
+	return sql;
+};
+function getSqlFile(sqlName,param){
 	var path="sqls/auth/signup/"+sqlName,
 		sql=fs.readFileSync(path,"utf8");
 	Object.keys(param).forEach(key=>{

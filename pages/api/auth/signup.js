@@ -28,7 +28,7 @@ export default async function handler(req,res){
 	
 	var data=req.body,
 		user_info=data.user_info,
-		qstr=getSqlString(queries.one,{phone:user_info.phone}),
+		qstr=getSqlFile("getWasUsers.sql",{phone:user_info.phone,activated:false}),
 		qUsers=await procQuery(qstr);
 	
 	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
@@ -94,6 +94,9 @@ function getSqlFile(sqlName,param){
 			val=param[key];
 		sql=sql.replace(regex,val);
 	});
+	
+	console.log(sql);
+	
 	return sql;
 };
 function generateToken(user){

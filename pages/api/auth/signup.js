@@ -13,7 +13,7 @@ export default async function handler(req,res){
 		"Access-Control-Allow-Methods":"POST"
 	});	
 	//#2. preflight 처리
-	if(req.body.length==0) return RESPOND({});
+	if(req.body.length==0) return RESPOND(res,{});
 	//#3. 데이터 처리	
 	//#3.1. 비밀번호 처리 우선
 	var salt=randomBytes(32);

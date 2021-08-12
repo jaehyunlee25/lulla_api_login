@@ -55,7 +55,7 @@ export default async function handler(req,res){
 	}else{	//신규회원 창설
 		//주로 정보의 중복이나 검증에 관한 작업이다.
 		//#3.2.3.1 이메일 중복 체크
-		var qSEs=getSameEmails.fQuery({email:user_info.email});
+		var qSEs=await QTS.getSameEmails.fQuery({email:user_info.email});
 		if(qSEs.type=="error") 
 			return ERROR(res,{id:"ERR.auth.signup.3.2.3.1.1",message:"email query failed"});
 		if(qSEs.message.rows.length>0)

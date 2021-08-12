@@ -40,7 +40,7 @@ export default async function handler(req,res){
 			
 		if(updateResult.type=="success"){
 			
-			USER=await getUser(wasUser.id);
+			USER={id:"d37b54a0-807b-11eb-bc7c-df4acec7a4d9"};
 			
 			console.log(USER);
 			

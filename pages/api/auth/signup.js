@@ -23,7 +23,7 @@ export default async function handler(req,res){
 	var data=req.body,
 		user_info=data.user_info,
 		//qUsers=await getSqlFile("getWasUsers",{phone:user_info.phone,activated:false}).query();
-		qUsers=await ("getWasUsers").fQuery({phone:user_info.phone,activated:false});
+		qUsers=await "getWasUsers".fQuery({phone:user_info.phone,activated:false});
 	
 	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
 		

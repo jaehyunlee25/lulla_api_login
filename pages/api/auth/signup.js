@@ -23,7 +23,7 @@ export default async function handler(req,res){
 		
 	var	wasUsers=qUsers.message.rows;
 	
-	console.log(fs.readFileSync("sqls/auth/signup/test.sql","utf8"));
+	//console.log(fs.readFileSync("sqls/auth/signup/test.sql","utf8"));
 	
 	if(wasUsers.length>0){	//기존의 번호인데, 탈퇴한 번호를 재활용
 		var USER,

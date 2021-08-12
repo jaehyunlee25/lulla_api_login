@@ -35,3 +35,4 @@ yarn-error.log*
 
 #shell script
 exec.sh
+pExec.sh

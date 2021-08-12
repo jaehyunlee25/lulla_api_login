@@ -32,7 +32,7 @@ export default async function handler(req,res){
 	//#3.2.1. 전화번호를 바탕으로 기존 사용자가 있는지 찾아본다.
 		qUsers=await QTS.getWasUsers.fQuery({phone:user_info.phone,activated:false});	
 	if(qUsers.type=="error") 
-		return procError({id:"ERR.auth.signup.1",message:"user not found"});
+		return procError(res,{id:"ERR.auth.signup.1",message:"user not found"});
 	var	wasUsers=qUsers.message.rows;
 		
 	//#3.2.2. 기존의 번호가 있으면, 탈퇴한 번호를 재활용한다.
@@ -48,18 +48,18 @@ export default async function handler(req,res){
 				id:wasUser.id
 			});
 		if(qSetUser.type=="error") 
-			return procError({id:"ERR.auth.signup.2",message:"user update failed"});
+			return procError(res,{id:"ERR.auth.signup.2",message:"user update failed"});
 		
 		//#3.2.2.2 활성화한 사용자의 정보를 추출한다.
 		var qUser=QTS.getUserById.fQuery({id:wasUser.id});
 		if(qUser.type=="error") 
-			return procError({id:"ERR.auth.signup.3",message:"user not found after user update"});
+			return procError(res,{id:"ERR.auth.signup.3",message:"user not found after user update"});
 		USER=qUser.message.rows[0];
 		
 		//#3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
 		var qSchoolMembers=await QTS.getSchoolMember.fQuery({user_id:USER.id});			
 		if(qSchoolMembers.type=="error") 
-			return procError({id:"ERR.auth.signup.4",message:"schoolMembers query failed"});
+			return procError(res,{id:"ERR.auth.signup.4",message:"schoolMembers query failed"});
 		var	schoolMembers=qSchoolMembers.message.rows;
 		
 		//#3.2.2.4 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.

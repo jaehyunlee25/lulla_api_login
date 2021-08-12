@@ -16,7 +16,6 @@ export default async function handler(req,res){
 	//#3. 데이터 처리
 	var data=req.body,
 		user_info=JSON.parse(data).user_info,
-		temporary,
 		qUsers=await procQuery("select * from users where phone='"+user_info.phone+"' and activated=false;");
 		
 	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
@@ -42,52 +41,35 @@ export default async function handler(req,res){
 			
 			USER=await getUser(wasUser.id);
 			
-			console.log(USER);
-			
-			var token=generateToken(USER);
-			var smQueryString=getSql("schoolMember.sql",{user_id:USER.id});
-			console.log(smQueryString);
-			//var schoolMember=await procQuery(smQueryString);
+			var token=generateToken(USER),
+				smQueryString=getSql("schoolMember.sql",{user_id:USER.id}),			
+				qSchoolMembers=await procQuery(smQueryString),
+				schoolMembers=qSchoolMembers.message.rows;
+				
+			//#3. data return
+			res.end(JSON.stringify({token,USER,schoolMembers}));
+
 		}else if(updateResult.type=="error"){
 			USER={type:"error",message:"can't update user!!"};
 		}
-	}
+	}else{
 		
-	
-	//#2. operation
-	/* const q1="select * from member;";
-	let data=await getData(q1); */
-	
-	
-	//#3. data return
-	res.end(JSON.stringify(wasUsers));
+	}
 };
 async function getUser(id){
 	var sql="select * from users where id='"+id+"';",
-		users=await procQuery(sql);
-	
-	if(users.type=="error") return users;
-	
+		users=await procQuery(sql);	
+	if(users.type=="error") return users;	
 	var user=users.message.rows[0];
 	return user;
 };
 function getSql(sqlName,param){
-	var path="sqls/auth/signup/"+sqlName;
-	var sql=fs.readFileSync(path,"utf8");
-	
+	var path="sqls/auth/signup/"+sqlName,
+		sql=fs.readFileSync(path,"utf8");	
 	Object.keys(param).forEach(key=>{
-		
-		//console.log(key);
-		
-		var regex=new RegExp("\\$\\{"+key+"\\}","g");
-		var val=param[key];
-		
-		//console.log(val);
-		
+		var regex=new RegExp("\\$\\{"+key+"\\}","g"),	//백슬래시 두 번, 잊지 말 것!!
+			val=param[key];
 		sql=sql.replace(regex,val);
-		
-		//console.log(sql);
-		
 	});
 	return sql;
 };

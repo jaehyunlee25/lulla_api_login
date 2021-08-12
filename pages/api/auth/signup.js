@@ -82,7 +82,7 @@ function getSqlString(str,param){
 		sql=sql.replace(regex,val);
 	});
 	
-	console.log(sql);
+	console.log(sql,"\n\n\n\n\n");
 	
 	return sql;
 };
@@ -95,7 +95,7 @@ function getSqlFile(sqlName,param){
 		sql=sql.replace(regex,val);
 	});
 	
-	console.log(sql);
+	console.log(sql,"\n\n\n\n\n");
 	
 	return sql;
 };

@@ -7,7 +7,7 @@ export default async function handler(req,res){
 	res.writeHead(200,{
 		"Access-Control-Allow-Origin":"*",	//for same origin policy
 		"Content-Type":"application/json",
-		"Access-Control-Allow-Headers":"application/json",	//for application/json 
+		"Access-Control-Allow-Headers":"Content-Type",	//for application/json 
 		"Access-Control-Allow-Methods":"POST"
 	});	
 	//#2. preflight 처리

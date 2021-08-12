@@ -39,7 +39,7 @@ export default async function handler(req,res){
 			updateResult=await procQuery(sql);
 			
 		if(updateResult.type=="success"){
-			USER=getUser(wasUser.id);
+			USER=await getUser(wasUser.id);
 			
 			console.log(USER);
 			

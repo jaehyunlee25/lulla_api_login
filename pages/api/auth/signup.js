@@ -40,7 +40,7 @@ export default async function handler(req,res){
 			
 		if(updateResult.type=="success"){
 			
-			USER={id:"d37b54a0-807b-11eb-bc7c-df4acec7a4d9"};
+			USER=getUser(wasUser.id);
 			
 			console.log(USER);
 			
@@ -63,10 +63,8 @@ export default async function handler(req,res){
 	res.end(JSON.stringify(wasUsers));
 };
 async function getUser(id){
-	var sql="select * from users where id="+id+";",
+	var sql="select * from users where id='"+id+"';",
 		users=await procQuery(sql);
-	
-	console.log(users);
 	
 	if(users.type=="error") return users;
 	
@@ -81,7 +79,7 @@ function getSql(sqlName,param){
 		
 		//console.log(key);
 		
-		var regex=new RegExp("\$\{"+key+"\}","g");
+		var regex=new RegExp("\\$\\{"+key+"\\}","g");
 		var val=param[key];
 		
 		//console.log(val);

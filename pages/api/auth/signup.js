@@ -1,7 +1,7 @@
 import argon2 from 'argon2';
 import {randomBytes} from 'crypto';
-import procQuery from "/lib/pgConn";
-
+import procQuery from "/lib/pgConn";	//include String.prototype.fQuery
+import {RESPOND,procError} from "/lib/apiCommon";	//include String.prototype.fQuery
 import jwt from 'jsonwebtoken';
 export default async function handler(req,res){
 	//회원가입	
@@ -71,15 +71,6 @@ export default async function handler(req,res){
 	}else{	//신규회원 창설
 		
 	}
-};
-function RESPOND(res,param){
-	res.end(JSON.stringify(param));
-	return;
-};
-function procError(res,param){
-	param.type="error";
-	res.end(JSON.stringify(param));
-	return;
 };
 function generateToken(user){
 	var today=new Date(),

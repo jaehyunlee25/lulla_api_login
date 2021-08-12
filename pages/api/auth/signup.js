@@ -21,14 +21,9 @@ export default async function handler(req,res){
 	req.body.user_info.password=await argon2.hash(req.body.user_info.password,{salt});
 	//#3.2. 작업
 	
-	var queries={
-		one:"select * from users where phone='${phone}' and activated=false;"
-	};
-	
-	
 	var data=req.body,
 		user_info=data.user_info,
-		qstr=getSqlFile("getWasUsers.sql",{phone:user_info.phone,activated:false}),
+		qstr=getSqlFile("getWasUsers",{phone:user_info.phone,activated:false}),
 		qUsers=await procQuery(qstr);
 	
 	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
@@ -44,7 +39,7 @@ export default async function handler(req,res){
 				name:user_info.name,
 				id:wasUser.id
 			},
-			sql=getSqlFile("setUser.sql",updateParams),
+			sql=getSqlFile("setUser",updateParams),
 			updateResult=await procQuery(sql);
 			
 		if(updateResult.type=="success"){
@@ -52,7 +47,7 @@ export default async function handler(req,res){
 			USER=await getUser(wasUser.id);
 			
 			var token=generateToken(USER),
-				smQueryString=getSqlFile("getSchoolMember.sql",{user_id:USER.id}),			
+				smQueryString=getSqlFile("getSchoolMember",{user_id:USER.id}),			
 				qSchoolMembers=await procQuery(smQueryString),
 				schoolMembers=qSchoolMembers.message.rows;
 				
@@ -87,7 +82,7 @@ function getSqlString(str,param){
 	return sql;
 };
 function getSqlFile(sqlName,param){
-	var path="sqls/auth/signup/"+sqlName,
+	var path="sqls/auth/signup/"+sqlName+".sql",
 		sql=fs.readFileSync(path,"utf8");
 	Object.keys(param).forEach(key=>{
 		var regex=new RegExp("\\$\\{"+key+"\\}","g"),	//백슬래시 두 번, 잊지 말 것!!

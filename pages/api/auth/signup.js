@@ -71,7 +71,7 @@ String.prototype.fQuery=async function(param){
 	
 	console.log(sql,"\n\n\n\n\n");
 	
-	return await procQuery(this);
+	return await procQuery(sql);
 };
 String.prototype.query=async function(){
 	return await procQuery(this);

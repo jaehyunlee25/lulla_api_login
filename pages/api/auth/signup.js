@@ -13,6 +13,7 @@ export default async function handler(req,res){
 	//#2. preflight 처리
 	if(req.body.length==0) return res.end("{}");
 	
+	console.log(typeof req.body);
 	console.log(req.body);
 	
 	//#3. 데이터 처리

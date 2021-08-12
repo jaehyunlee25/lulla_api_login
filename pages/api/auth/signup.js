@@ -40,7 +40,7 @@ export default async function handler(req,res){
 		var wasUser=wasUsers[0];
 		
 		//#3.2.2.1 탈퇴한 정보를 활성화하고, 새로운 정보로 수정한다(기존 정보를 재활용하지만, 기존 사용자임을 보장하진 않는다).	
-		var	qSetUser=QTS.setUser.fQuery({
+		var	qSetUser=await QTS.setUser.fQuery({
 				activated:true,
 				password:user_info.password,
 				email:user_info.email,
@@ -51,7 +51,7 @@ export default async function handler(req,res){
 			return procError(res,{id:"ERR.auth.signup.2",message:"user update failed"});
 		
 		//#3.2.2.2 활성화한 사용자의 정보를 추출한다.
-		var qUser=QTS.getUserById.fQuery({id:wasUser.id});
+		var qUser=await QTS.getUserById.fQuery({id:wasUser.id});
 		if(qUser.type=="error") 
 			return procError(res,{id:"ERR.auth.signup.3",message:"user not found after user update"});
 		USER=qUser.message.rows[0];

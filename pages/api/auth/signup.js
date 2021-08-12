@@ -64,7 +64,8 @@ export default async function handler(req,res){
 async function getUser(id){
 	var sql="select * from users where id="+id+";",
 		users=await procQuery(sql);
-	if(user.type=="error") return user;
+	if(users.type=="error") return users;
+	
 	var user=users.message.rows[0];
 	return user;
 };

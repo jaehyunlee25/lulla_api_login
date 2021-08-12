@@ -22,9 +22,8 @@ export default async function handler(req,res){
 	//#3.2. 작업	
 	var data=req.body,
 		user_info=data.user_info,
-		//qstr=getSqlFile("getWasUsers",{phone:user_info.phone,activated:false}),
-		qUsers=await getSqlFile("getWasUsers",{phone:user_info.phone,activated:false}).query();
-		//qUsers=await procQuery(qstr);
+		//qUsers=await getSqlFile("getWasUsers",{phone:user_info.phone,activated:false}).query();
+		qUsers=await ("getWasUsers").fQuery({phone:user_info.phone,activated:false});
 	
 	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
 		
@@ -60,6 +59,19 @@ export default async function handler(req,res){
 	}else{	//신규회원 창설
 		
 	}
+};
+String.prototype.fQuery=async function(param){
+	var path="sqls/auth/signup/"+this+".sql",
+		sql=fs.readFileSync(path,"utf8");
+	Object.keys(param).forEach(key=>{
+		var regex=new RegExp("\\$\\{"+key+"\\}","g"),	//백슬래시 두 번, 잊지 말 것!!
+			val=param[key];
+		sql=sql.replace(regex,val);
+	});
+	
+	console.log(sql,"\n\n\n\n\n");
+	
+	return await procQuery(this);
 };
 String.prototype.query=async function(){
 	return await procQuery(this);

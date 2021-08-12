@@ -65,7 +65,7 @@ async function getUser(id){
 	var sql="select * from users where id="+id+";",
 		users=await procQuery(sql);
 	if(user.type=="error") return user;
-	var user=users.message.row[0];
+	var user=users.message.rows[0];
 	return user;
 };
 function getSql(sqlName,param){

@@ -61,6 +61,7 @@ export default async function handler(req,res){
 function getSql(sqlName,param){
 	var path="sqls/auth/signup/"+sqlName;
 	var sql=fs.readFileSync(path,"utf8");
+	console.log(sql);
 	Object.keys(param).forEach(key=>{
 		var regex=new RegExp("\$\{"+key+"\}","g");
 		var val=param[key];

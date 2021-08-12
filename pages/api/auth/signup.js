@@ -1,3 +1,5 @@
+import argon2 from 'argon2';
+import {randomBytes} from 'crypto';
 import procQuery from "/lib/pgConn";
 import fs from "fs";	//fs의 baseUrl은 프로젝트 메인이다. 
 import jwt from 'jsonwebtoken';
@@ -14,6 +16,13 @@ export default async function handler(req,res){
 	if(req.body.length==0) return res.end("{}");
 	
 	//#3. 데이터 처리
+	//비밀번호 처리 우선
+	const salt=randomBytes(32);
+	req.body.user_info.password=await argon2.hash(req.body.user_info.password,{salt});
+	
+	console.log(req.body);
+	
+	
 	var data=req.body,
 		user_info=data.user_info,
 		qUsers=await procQuery("select * from users where phone='"+user_info.phone+"' and activated=false;");

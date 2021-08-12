@@ -44,7 +44,7 @@ export default async function handler(req,res){
 				name:user_info.name,
 				id:wasUser.id
 			},
-			sql=getSqlFile("setUser.sql",updateParams);
+			sql=getSqlFile("setUser.sql",updateParams),
 			updateResult=await procQuery(sql);
 			
 		if(updateResult.type=="success"){

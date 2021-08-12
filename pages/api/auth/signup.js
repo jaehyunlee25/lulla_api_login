@@ -25,7 +25,8 @@ export default async function handler(req,res){
 			getWasUsers:"getWasUsers",
 			setUser:"setUser",
 			getSchoolMember:"getSchoolMember",
-			getUserById:"getUserById"
+			getUserById:"getUserById",
+			getSameEmails:"getSameEmails"
 		},
 		data=req.body,
 		user_info=data.user_info,
@@ -52,19 +53,29 @@ export default async function handler(req,res){
 		
 	//#3.2.3. 기존의 번호가 없으면, 새로 등록한다.
 	}else{	//신규회원 창설
+		//주로 정보의 중복이나 검증에 관한 작업이다.
+		//#3.2.3.1 이메일 중복 체크
+		var qSEs=getSameEmails.fQuery({email:user_info.email});
+		if(qSEs.type=="error") 
+			return ERROR(res,{id:"ERR.auth.signup.3.2.3.1.1",message:"email query failed"});
+		if(qSEs.message.rows.length>0)
+			return ERROR(res,{id:"ERR.auth.signup.3.2.3.1.2",message:"same email existing"});
+		
+		
+	
 		return RESPOND(res,{type:"empty"});
 	}
 	
 	//#3.2.2.2 활성화한 사용자의 정보를 추출한다.
 	var qUser=await QTS.getUserById.fQuery({id:wasUser.id});
 	if(qUser.type=="error") 
-		return ERROR(res,{id:"ERR.auth.signup.3",message:"user not found after user update"});
+		return ERROR(res,{id:"ERR.auth.signup.4",message:"user not found after user update"});
 	USER=qUser.message.rows[0];
 	
 	//#3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
 	var qSchoolMembers=await QTS.getSchoolMember.fQuery({user_id:USER.id});			
 	if(qSchoolMembers.type=="error") 
-		return ERROR(res,{id:"ERR.auth.signup.4",message:"schoolMembers query failed"});
+		return ERROR(res,{id:"ERR.auth.signup.5",message:"schoolMembers query failed"});
 	var	schoolMembers=qSchoolMembers.message.rows;
 	
 	//#3.2.2.4 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.

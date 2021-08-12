@@ -63,9 +63,18 @@ function getSql(sqlName,param){
 	var sql=fs.readFileSync(path,"utf8");
 	
 	Object.keys(param).forEach(key=>{
+		
+		console.log(key);
+		
 		var regex=new RegExp("\$\{"+key+"\}","g");
 		var val=param[key];
+		
+		console.log(val);
+		
 		sql=sql.replace(regex,val);
+		
+		console.log(sql);
+		
 	});
 	return sql;
 };

@@ -46,7 +46,7 @@ export default async function handler(req,res){
 			
 			var token=generateToken(USER);
 			var smQueryString=getSql("schoolMember.sql",{user_id:USER.id});
-			//console.log(smQueryString);
+			console.log(smQueryString);
 			//var schoolMember=await procQuery(smQueryString);
 		}else if(updateResult.type=="error"){
 			USER={type:"error",message:"can't update user!!"};

@@ -79,5 +79,5 @@ function generateToken(user){
 		name:user.name,
 		exp:exp.getTime()/1000
 	};
-	return jwt.sign(param,config.jwt_secret);
+	return jwt.sign(param,process.env.JWT_SECRET);
 };

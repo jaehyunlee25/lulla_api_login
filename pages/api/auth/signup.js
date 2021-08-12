@@ -69,6 +69,6 @@ export default async function handler(req,res){
 		return RESPOND(res,{token,USER,schoolMembers});
 		
 	}else{	//신규회원 창설
-		return RESPOND(res,{});
+		return RESPOND(res,{type:"empty"});
 	}
 };

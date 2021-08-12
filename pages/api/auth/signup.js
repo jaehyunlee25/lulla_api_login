@@ -40,9 +40,12 @@ export default async function handler(req,res){
 			
 		if(updateResult.type=="success"){
 			USER=updateResult.message;
+			
+			console.log(USER);
+			
 			var token=generateToken(USER);
 			var smQueryString=getSql("schoolMember.sql",{user_id:USER.id});
-			console.log(smQueryString);
+			//console.log(smQueryString);
 			//var schoolMember=await procQuery(smQueryString);
 		}else if(updateResult.type=="error"){
 			USER={type:"error",message:"can't update user!!"};
@@ -64,16 +67,16 @@ function getSql(sqlName,param){
 	
 	Object.keys(param).forEach(key=>{
 		
-		console.log(key);
+		//console.log(key);
 		
 		var regex=new RegExp("\$\{"+key+"\}","g");
 		var val=param[key];
 		
-		console.log(val);
+		//console.log(val);
 		
 		sql=sql.replace(regex,val);
 		
-		console.log(sql);
+		//console.log(sql);
 		
 	});
 	return sql;

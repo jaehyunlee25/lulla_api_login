@@ -37,4 +37,4 @@ left join kid k on m.kid_id = k.id
 
 where 
 	m.school_id = '${user_id}' 
-	and m.is_active is true
+	and m.is_active is true;

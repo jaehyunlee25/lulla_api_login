@@ -28,9 +28,9 @@ export default async function handler(req,res){
 	
 	var data=req.body,
 		user_info=data.user_info,
-		qstr=getSqlString(queries.one,{phone:user_info.phone});
+		qstr=getSqlString(queries.one,{phone:user_info.phone}),
 		qUsers=await procQuery(qstr);
-		
+	
 	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
 		
 	var	wasUsers=qUsers.message.rows;	
@@ -81,6 +81,9 @@ function getSqlString(str,param){
 			val=param[key];
 		sql=sql.replace(regex,val);
 	});
+	
+	console.log(sql);
+	
 	return sql;
 };
 function getSqlFile(sqlName,param){

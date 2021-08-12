@@ -71,4 +71,5 @@ export default async function handler(req,res){
 	}else{	//신규회원 창설
 		return RESPOND(res,{type:"empty"});
 	}
+	return RESPOND(res,{type:"end"});
 };

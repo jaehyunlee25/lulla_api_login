@@ -16,10 +16,10 @@ export default async function handler(req,res){
 		user_info=JSON.parse(data).user_info,
 		temporary,
 		qUsers=await procQuery("select * from users where phone='"+user_info.phone+"' and activated=false;");
-	
-	console.log(qUsers);
-	
-	var	wasUsers=qUsers.rows;
+		
+	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
+		
+	var	wasUsers=qUsers.message.rows;
 	
 	console.log(fs.readFileSync(strSQL));
 	

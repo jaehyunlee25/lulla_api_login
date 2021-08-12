@@ -1,7 +1,7 @@
 import argon2 from 'argon2';
 import {randomBytes} from 'crypto';
 import procQuery from "/lib/pgConn";
-import fs from "fs";	//fs의 baseUrl은 프로젝트 메인이다. 
+
 import jwt from 'jsonwebtoken';
 export default async function handler(req,res){
 	//회원가입	

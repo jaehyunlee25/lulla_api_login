@@ -13,52 +13,73 @@ export default async function handler(req,res){
 		"Access-Control-Allow-Methods":"POST"
 	});	
 	//#2. preflight 처리
-	if(req.body.length==0) return res.end("{}");
-	
+	if(req.body.length==0) return RESPOND({});
 	//#3. 데이터 처리	
 	//#3.1. 비밀번호 처리 우선
-	const salt=randomBytes(32);
+	var salt=randomBytes(32);
 	req.body.user_info.password=await argon2.hash(req.body.user_info.password,{salt});
-	//#3.2. 작업	
-	var data=req.body,
+	//#3.2. 작업
+	var USER,
+		QTS={	//Query TemplateS
+			getWasUsers:"getWasUsers",
+			setUser:"setUser",
+			getSchoolMember:"getSchoolMember",
+			getUserById:"getUserById"
+		},
+		data=req.body,
 		user_info=data.user_info,
-		//qUsers=await getSqlFile("getWasUsers",{phone:user_info.phone,activated:false}).query();
-		qUsers=await "getWasUsers".fQuery({phone:user_info.phone,activated:false});
-	
-	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
 		
-	var	wasUsers=qUsers.message.rows;	
-	if(wasUsers.length>0){	//기존의 번호인데, 탈퇴한 번호를 재활용
-		var USER,
-			wasUser=wasUsers[0],
-			updateParams={
+	//#3.2.1. 전화번호를 바탕으로 기존 사용자가 있는지 찾아본다.
+		qUsers=await QTS.getWasUsers.fQuery({phone:user_info.phone,activated:false});	
+	if(qUsers.type=="error") 
+		return procError({id:"ERR.auth.signup.1",message:"user not found"});
+	var	wasUsers=qUsers.message.rows;
+		
+	//#3.2.2. 기존의 번호가 있으면, 탈퇴한 번호를 재활용한다.
+	if(wasUsers.length>0){
+		var wasUser=wasUsers[0];
+		
+		//#3.2.2.1 탈퇴한 정보를 활성화하고, 새로운 정보로 수정한다(기존 정보를 재활용하지만, 기존 사용자임을 보장하진 않는다).	
+		var	qSetUser=QTS.setUser.fQuery({
 				activated:true,
 				password:user_info.password,
 				email:user_info.email,
 				name:user_info.name,
 				id:wasUser.id
-			},
-			sql=getSqlFile("setUser",updateParams),
-			updateResult=await procQuery(sql);
+			});
+		if(qSetUser.type=="error") 
+			return procError({id:"ERR.auth.signup.2",message:"user update failed"});
+		
+		//#3.2.2.2 활성화한 사용자의 정보를 추출한다.
+		var qUser=QTS.getUserById.fQuery({id:wasUser.id});
+		if(qUser.type=="error") 
+			return procError({id:"ERR.auth.signup.3",message:"user not found after user update"});
+		USER=qUser.message.rows[0];
+		
+		//#3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
+		var qSchoolMembers=await QTS.getSchoolMember.fQuery({user_id:USER.id});			
+		if(qSchoolMembers.type=="error") 
+			return procError({id:"ERR.auth.signup.4",message:"schoolMembers query failed"});
+		var	schoolMembers=qSchoolMembers.message.rows;
+		
+		//#3.2.2.4 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.
+		var token=generateToken(USER);
 			
-		if(updateResult.type=="success"){
-			
-			USER=await getUser(wasUser.id);
-			
-			var token=generateToken(USER),
-				smQueryString=getSqlFile("getSchoolMember",{user_id:USER.id}),			
-				qSchoolMembers=await procQuery(smQueryString),
-				schoolMembers=qSchoolMembers.message.rows;
-				
-			//#3. data return
-			res.end(JSON.stringify({token,USER,schoolMembers}));
-
-		}else if(updateResult.type=="error"){
-			USER={type:"error",message:"can't update user!!"};
-		}
+		//#3.2.2.5 활성화한 사용자, 토큰, 학원인원을 리턴한다.
+		return RESPOND(res,{token,USER,schoolMembers});
+		
 	}else{	//신규회원 창설
 		
 	}
+};
+function RESPOND(res,param){
+	res.end(JSON.stringify(param));
+	return;
+};
+function procError(res,param){
+	param.type="error";
+	res.end(JSON.stringify(param));
+	return;
 };
 String.prototype.fQuery=async function(param){
 	var path="sqls/auth/signup/"+this+".sql",
@@ -72,41 +93,6 @@ String.prototype.fQuery=async function(param){
 	console.log(sql,"\n\n\n\n\n");
 	
 	return await procQuery(sql);
-};
-String.prototype.query=async function(){
-	return await procQuery(this);
-};
-async function getUser(id){
-	var sql=getSqlFile("getUserById",{id:id}),
-		users=await procQuery(sql);	
-	if(users.type=="error") return users;	
-	var user=users.message.rows[0];
-	return user;
-};
-function getSqlString(str,param){
-	var sql=str;
-	Object.keys(param).forEach(key=>{
-		var regex=new RegExp("\\$\\{"+key+"\\}","g"),	//백슬래시 두 번, 잊지 말 것!!
-			val=param[key];
-		sql=sql.replace(regex,val);
-	});
-	
-	console.log(sql,"\n\n\n\n\n");
-	
-	return sql;
-};
-function getSqlFile(sqlName,param){
-	var path="sqls/auth/signup/"+sqlName+".sql",
-		sql=fs.readFileSync(path,"utf8");
-	Object.keys(param).forEach(key=>{
-		var regex=new RegExp("\\$\\{"+key+"\\}","g"),	//백슬래시 두 번, 잊지 말 것!!
-			val=param[key];
-		sql=sql.replace(regex,val);
-	});
-	
-	console.log(sql,"\n\n\n\n\n");
-	
-	return sql;
 };
 function generateToken(user){
 	var today=new Date(),

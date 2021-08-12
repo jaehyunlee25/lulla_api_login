@@ -15,8 +15,11 @@ export default async function handler(req,res){
 	var data=req.body,
 		user_info=JSON.parse(data).user_info,
 		temporary,
-		qUsers=await procQuery("select * from users where phone='"+user_info.phone+"' and activated=false;"),
-		wasUsers=qUsers.rows;
+		qUsers=await procQuery("select * from users where phone='"+user_info.phone+"' and activated=false;");
+	
+	console.log(qUsers);
+	
+	var	wasUsers=qUsers.rows;
 	
 	console.log(fs.readFileSync(strSQL));
 	
@@ -48,7 +51,7 @@ export default async function handler(req,res){
 	
 	
 	//#3. data return
-	res.end(JSON.stringify(result));
+	res.end(JSON.stringify(wasUsers));
 };
 function generateToken(user){
 	var today=new Date(),

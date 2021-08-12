@@ -1,5 +1,4 @@
 import procQuery from "/lib/pgConn";
-import strSQL from "/sqls/auth/signup/test.sql";
 export default async function handler(req,res){
 	//회원가입	
 	//#1. cors 해제
@@ -19,7 +18,7 @@ export default async function handler(req,res){
 		wasUsers=await procQuery("select * from users where phone='"+user_info.phone+"' and activated=false;"),
 		rows=result.rows;
 	
-	console.log(strSQL);
+	console.log(fs.readFileSync(strSQL));
 	
 	if(rows.length>0){	//기존의 번호인데, 탈퇴한 번호를 재활용
 		var USER,

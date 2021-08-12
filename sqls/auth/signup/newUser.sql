@@ -16,16 +16,16 @@ insert into
 	)
 values (
 	uuid_generate_v1(),	-- id default uuid_generate_v1()
-	${password},
-	${email},
-	${phone},
+	'${password}',
+	'${email}',
+	'${phone}',
 	true,	-- activated default false
-	${name},
-	${provider},	-- local, kakao, google, naver, apple
+	'${name}',
+	'${provider}',	-- local, kakao, google, naver, apple
 	now(),	-- created_at
 	now(),	-- updated_at
 	'',		-- device_token
-	token_type,	-- 0 안드로이드, 1 애플
+	'',		-- token_type 0 안드로이드, 1 애플
 	false,		-- advertise default false
 	''			-- last_login
 )

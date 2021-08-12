@@ -19,12 +19,12 @@ export default async function handler(req,res){
 	//#3.1. 비밀번호 처리 우선
 	const salt=randomBytes(32);
 	req.body.user_info.password=await argon2.hash(req.body.user_info.password,{salt});
-	//#3.2. 작업
-	
+	//#3.2. 작업	
 	var data=req.body,
 		user_info=data.user_info,
-		qstr=getSqlFile("getWasUsers",{phone:user_info.phone,activated:false}),
-		qUsers=await procQuery(qstr);
+		//qstr=getSqlFile("getWasUsers",{phone:user_info.phone,activated:false}),
+		qUsers=await getSqlFile("getWasUsers",{phone:user_info.phone,activated:false}).query();
+		//qUsers=await procQuery(qstr);
 	
 	if(qUsers.type=="error") return res.end("{type:'error',message:'user not found.'}");
 		
@@ -61,9 +61,11 @@ export default async function handler(req,res){
 		
 	}
 };
+String.prototype.query=async function(){
+	return await procQuery(this);
+};
 async function getUser(id){
-	var sqlTemplate="select * from users where id='${id}';",
-		sql=getSqlString(sqlTemplate,{id:id}),
+	var sql=getSqlFile("getUserById",{id:id}),
 		users=await procQuery(sql);	
 	if(users.type=="error") return users;	
 	var user=users.message.rows[0];

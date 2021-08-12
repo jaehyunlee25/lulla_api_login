@@ -1,5 +1,5 @@
 import procQuery from "/lib/pgConn";
-import fs from "fs";
+import fs from "fs";	//fs의 baseUrl은 프로젝트 메인이다. 
 import jwt from 'jsonwebtoken';
 export default async function handler(req,res){
 	//회원가입	
@@ -41,6 +41,9 @@ export default async function handler(req,res){
 		if(updateResult.type=="success"){
 			USER=updateResult.message;
 			var token=generateToken(USER);
+			var smQueryString=getSql("schoolMember.sql",{user_id:USER.id});
+			console.log(smQueryString);
+			//var schoolMember=await procQuery(smQueryString);
 		}else if(updateResult.type=="error"){
 			USER={type:"error",message:"can't update user!!"};
 		}
@@ -54,6 +57,16 @@ export default async function handler(req,res){
 	
 	//#3. data return
 	res.end(JSON.stringify(wasUsers));
+};
+function getSql(sqlName,param){
+	var path="sqls/auth/signup/"+sqlName;
+	var sql=fs.readFileSync(path,"utf8");
+	Object.keys(param).forEach(key=>{
+		var regex=new RegExp("\$\{"+key+"\}","g");
+		var val=param[key];
+		sql=sql.replace(/\$\{\}/g,val);
+		return sql;
+	});
 };
 function generateToken(user){
 	var today=new Date(),

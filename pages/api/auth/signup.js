@@ -40,7 +40,7 @@ export default async function handler(req,res){
 			
 		if(updateResult.type=="success"){
 			
-			USER=getUser(wasUser.id);
+			USER=await getUser(wasUser.id);
 			
 			console.log(USER);
 			

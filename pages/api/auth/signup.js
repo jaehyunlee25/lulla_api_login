@@ -81,19 +81,6 @@ function procError(res,param){
 	res.end(JSON.stringify(param));
 	return;
 };
-String.prototype.fQuery=async function(param){
-	var path="sqls/auth/signup/"+this+".sql",
-		sql=fs.readFileSync(path,"utf8");
-	Object.keys(param).forEach(key=>{
-		var regex=new RegExp("\\$\\{"+key+"\\}","g"),	//백슬래시 두 번, 잊지 말 것!!
-			val=param[key];
-		sql=sql.replace(regex,val);
-	});
-	
-	console.log(sql,"\n\n\n\n\n");
-	
-	return await procQuery(sql);
-};
 function generateToken(user){
 	var today=new Date(),
 		exp=new Date(today);		

@@ -26,7 +26,10 @@ export default async function handler(req,res){
 			setUser:"setUser",
 			getSchoolMember:"getSchoolMember",
 			getUserById:"getUserById",
-			getSameEmails:"getSameEmails"
+			getSameEmails:"getSameEmails",
+			getSamePhones:"getSamePhones",
+			getVerifyNumber:"getVerifyNumber",
+			newUser:"newUser",
 		},
 		data=req.body,
 		user_info=data.user_info,
@@ -51,6 +54,12 @@ export default async function handler(req,res){
 		if(qSetUser.type=="error") 
 			return ERROR(res,{id:"ERR.auth.signup.2",message:"user update failed"});
 		
+		//#3.2.2.2 활성화한 사용자의 정보를 추출한다.
+		var qUser=await QTS.getUserById.fQuery({id:wasUser.id});
+		if(qUser.type=="error") 
+			return ERROR(res,{id:"ERR.auth.signup.4",message:"user not found after user update"});
+		USER=qUser.message.rows[0];
+	
 	//#3.2.3. 기존의 번호가 없으면, 새로 등록한다.
 	}else{	//신규회원 창설
 		//주로 정보의 중복이나 검증에 관한 작업이다.
@@ -61,16 +70,33 @@ export default async function handler(req,res){
 		if(qSEs.message.rows.length>0)
 			return ERROR(res,{id:"ERR.auth.signup.3.2.3.1.2",message:"same email existing"});
 		
+		//#3.2.3.2 전화번호 중복 체크
+		var qSPs=await QTS.getSamePhones.fQuery({phone:user_info.phone});
+		if(qSPs.type=="error") 
+			return ERROR(res,{id:"ERR.auth.signup.3.2.3.2.1",message:"phone query failed"});
+		if(qSPs.message.rows.length>0)
+			return ERROR(res,{id:"ERR.auth.signup.3.2.3.2.2",message:"same phone existing"});
 		
-	
-		return RESPOND(res,{type:"empty"});
+		//#3.2.3.3 전화번호 인증 체크
+		var qVN=await QTS.getVerifyNumber.fQuery({phone:user_info.phone});
+		if(qVN.type=="error") 
+			return ERROR(res,{id:"ERR.auth.signup.3.2.3.3.1",message:"phone verify query failed"});
+		if(qVN.message.rows.length==0)
+			return ERROR(res,{id:"ERR.auth.signup.3.2.3.3.2",message:"not verified number"});
+		
+		//#3.2.3.4 등록절차
+		var qNU=await QTS.newUser.fQuery({
+			name:user_info.name,
+			email:user_info.email,
+			phone:user_info.phone,
+			password:user_info.password,
+			provider:data.type
+		});
+		if(qNU.type=="error") 
+			return ERROR(res,{id:"ERR.auth.signup.3.2.3.4.1",message:"user insert query failed"});
+		
+		return RESPOND(res,qNU);
 	}
-	
-	//#3.2.2.2 활성화한 사용자의 정보를 추출한다.
-	var qUser=await QTS.getUserById.fQuery({id:wasUser.id});
-	if(qUser.type=="error") 
-		return ERROR(res,{id:"ERR.auth.signup.4",message:"user not found after user update"});
-	USER=qUser.message.rows[0];
 	
 	//#3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
 	var qSchoolMembers=await QTS.getSchoolMember.fQuery({user_id:USER.id});			

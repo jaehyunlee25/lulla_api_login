@@ -39,7 +39,7 @@ export default async function handler(req,res){
 			updateResult=await procQuery(sql);
 			
 		if(updateResult.type=="success"){
-			USER=updateResult.message;
+			USER=getUser(wasUser.id);
 			
 			console.log(USER);
 			
@@ -60,6 +60,13 @@ export default async function handler(req,res){
 	
 	//#3. data return
 	res.end(JSON.stringify(wasUsers));
+};
+async function getUser(id){
+	var sql="select * from users where id="+id+";",
+		users=await procQuery(sql);
+	if(user.type=="error") return user;
+	var user=users.message.row[0];
+	return user;
 };
 function getSql(sqlName,param){
 	var path="sqls/auth/signup/"+sqlName;

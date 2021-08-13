@@ -5,4 +5,4 @@ from
 where
 	phone='${phone}'
 	and code='${code}'
-	and type=${phone};
+	and type=${type};

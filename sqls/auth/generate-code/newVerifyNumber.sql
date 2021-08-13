@@ -1,5 +1,5 @@
 insert into
-	verify_number(
+	verify_numbers(
 		id,
 		phone,
 		code,

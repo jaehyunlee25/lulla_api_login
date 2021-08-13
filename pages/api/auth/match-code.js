@@ -47,7 +47,7 @@ export default async function handler(req,res){
 		}
 		//#3.2.2.
 		return RESPOND(res,{
-			message:'휴대폰 인증에 성공하셨습니다.'
+			message:'휴대폰 인증에 성공하셨습니다.',
 			resultCode:200
 		});
 	}	

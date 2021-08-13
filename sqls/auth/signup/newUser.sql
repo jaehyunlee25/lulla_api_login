@@ -25,7 +25,7 @@ values (
 	now(),	-- created_at
 	now(),	-- updated_at
 	'',		-- device_token
-	'',		-- token_type 0 안드로이드, 1 애플
+	null,		-- token_type 0 안드로이드, 1 애플
 	false,		-- advertise default false
 	''			-- last_login
 )

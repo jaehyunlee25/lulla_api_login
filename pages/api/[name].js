@@ -1,7 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import getData from "/lib/pgConn";
+import {RESPOND,ERROR} from "/lib/apiCommon";
+import setBaseURL from "/lib/pgConn";	//include String.prototype.fQuery
 export default async function handler(req,res){
-	const q1="select * from "+req.query.name+";";
-	let data=await getData(q1);
-	res.status(200).json(data);
+	setBaseURL("sqls");	//끝에 슬래시 붙이지 마시오!
+	var qName="name".fQuery({table_name:"users"});
+	res.status(200).json(qName);
 };

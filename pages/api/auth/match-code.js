@@ -1,4 +1,4 @@
-import {RESPOND,ERROR,PASSWORD,TOKEN} from "/lib/apiCommon";	//include String.prototype.fQuery
+import {RESPOND,ERROR} from "/lib/apiCommon";
 import setBaseURL from "/lib/pgConn";	//include String.prototype.fQuery
 
 export default async function handler(req,res){
@@ -33,7 +33,6 @@ export default async function handler(req,res){
 				type:post_param.type
 			});
 	}catch(e){
-		console.log(e);
 		return ERROR(res,{id:"ERR.auth.match-code.3.1.1",message:"verify code query failed"});
 	}
 	//#3.2.

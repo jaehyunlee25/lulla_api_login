@@ -131,6 +131,6 @@ export default async function handler(req,res){
 	return RESPOND(res,{
 		data:{USER,schoolMembers},
 		token:token,
-		resultCode:code
+		resultCode:200
 	});
 };

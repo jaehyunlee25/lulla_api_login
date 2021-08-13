@@ -85,15 +85,18 @@ export default async function handler(req,res){
 			return ERROR(res,{id:"ERR.auth.signup.3.2.3.3.2",message:"not verified number"});
 		
 		//#3.2.3.4 등록절차
-		var qNU=await QTS.newUser.fQuery({
-			name:user_info.name,
-			email:user_info.email,
-			phone:user_info.phone,
-			password:user_info.password,
-			provider:data.type
-		});
-		if(qNU.type=="error") 
-			return ERROR(res,{id:"ERR.auth.signup.3.2.3.4.1",message:"user insert query failed"});
+		try{
+			var qNU=await QTS.newUser.fQuery({
+					name:user_info.name,
+					email:user_info.email,
+					phone:user_info.phone,
+					password:user_info.password,
+					provider:data.type
+				});
+		}catch(e){
+			if(qNU.type=="error") 
+				return ERROR(res,{id:"ERR.auth.signup.3.2.3.4.1",message:"user insert query failed"});			
+		}
 		
 		return RESPOND(res,qNU);
 	}

@@ -18,28 +18,29 @@ export default async function handler(req,res){
 	//#3. 데이터 처리	
 	setBaseURL("sqls/auth/match-code");	//끝에 슬래시 붙이지 마시오.
 	var QTS={	//Query TemplateS
-			getVerifyNumber:"getVerifyNumber",
-			setVerifyNumber:"setVerifyNumber",
+			sqlGet:"getVerifyNumber",
+			sqlSet:"setVerifyNumber",
 		},
 		data=req.body,
 		post_param=data.verify;
+		
 	//#3.0.1. 전화번호에서 숫자 외의 기호 삭제
 	post_param.phone=post_param.phone.replace(/\-/g,"");
+	
 	//#3.1.
-	var qVN=await QTS.getVerifyNumber.fQuery({
+	var qVN=await QTS.sqlGet.fQuery({
 			phone:post_param.phone,
 			code:post_param.code,
 			type:post_param.type
 		});
-	if(qVN.type=="error") 
-		return ERROR(res,{id:"ERR.auth.match-code.3.1.1",message:"verify code query failed"});
+	if(qVN.type=="error") return qVN.onError(res,"3.1.1","verify code");
+	
 	//#3.2.
 	var vn=qVN.message.rows[0];
-	if(vn.type==0){
+	if(vn.type==0){	//신규가입일 때,
 		//#3.2.1.
-		var qSVN=await QTS.setVerifyNumber.fQuery({id:vn.id});
-		if(qSVN.type=="error") 
-			return ERROR(res,{id:"ERR.auth.match-code.3.2.1",message:"verify code update failed"});
+		var qSVN=await QTS.sqlSet.fQuery({id:vn.id});
+		if(qSVN.type=="error") return qSVN.onError(res,"3.2.1","verify code update"); 
 		//#3.2.2.
 		return RESPOND(res,{
 			message:'휴대폰 인증에 성공하셨습니다.',

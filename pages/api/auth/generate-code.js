@@ -20,11 +20,11 @@ export default async function handler(req,res){
 	//#3.1. 작업
 	setBaseURL("sqls/auth/generate-code");	//끝에 슬래시 붙이지 마시오.
 	var QTS={	//Query TemplateS
-			getUserByPhone:"getUserByPhone",
-			getVerifyNumber:"getVerifyNumber",
-			getVerifyNumberById:"getVerifyNumberById",
-			delVerifyNumber:"delVerifyNumber",
-			newVerifyNumber:"newVerifyNumber",
+			getUBP:"getUserByPhone",
+			getVN:"getVerifyNumber",
+			getVNBI:"getVerifyNumberById",
+			delVN:"delVerifyNumber",
+			newVN:"newVerifyNumber",
 		},
 		data=req.body,
 		post_param=data.verify;
@@ -33,44 +33,41 @@ export default async function handler(req,res){
 	post_param.phone=post_param.phone.replace(/\-/g,"");
 	
 	//#3.2. 이미 등록된 전화번호 체크
-	var qUBP=await QTS.getUserByPhone.fQuery({phone:post_param.phone});
-	if(qUBP.type=="error") 
-		return ERROR(res,{id:"ERR.auth.generate-code.3.2.1",message:"phone user query failed"});
+	var qUBP=await QTS.getUBP.fQuery({phone:post_param.phone});
+	if(qUBP.type=="error") return qUBP.onError(res,"3.2.1","phone user");
 	if(qUBP.message.rows.length>0)
-		return ERROR(res,{id:"ERR.auth.generate-code.3.2.2",message:"이미 해당하는 번호를 사용하고 있는 유저가 있습니다."});
+		return ERROR(res,{
+			id:"ERR.auth.generate-code.3.2.2",
+			message:"이미 해당하는 번호를 사용하고 있는 유저가 있습니다."
+		});
 	
 	//#3.3. 이미 등록된 검사번호 체크
-	var qVN=await QTS.getVerifyNumber.fQuery({phone:post_param.phone,type:post_param.type});
-	if(qVN.type=="error") 
-		return ERROR(res,{id:"ERR.auth.generate-code.3.3.1",message:"phone verify query failed"});
+	var qVN=await QTS.getVN.fQuery({phone:post_param.phone,type:post_param.type});
+	if(qVN.type=="error") return qVN.onError(res,"3.3.1","phone verify");
 	
 	//#3.4. 이미 등록된 검사번호 삭제
 	if(qVN.message.rows.length>0){
 		var phone_vn_id=qVN.message.rows[0].id,
-			qDVN=await QTS.delVerifyNumber.fQuery({id:phone_vn_id});
-		if(qDVN.type=="error") 
-			return ERROR(res,{id:"ERR.auth.generate-code.3.4.1",message:"phone verify number delete query failed"});
+			qDVN=await QTS.delVN.fQuery({id:phone_vn_id});
+		if(qDVN.type=="error") return qDVN.onError(res,"3.4.1","phone verify number delete"); 
 	}
 	
 	//#3.5. 새 인증번호 등록
 	var verify_code=getRandom(1000,9999),
-		qNVN=await QTS.newVerifyNumber.fQuery({
+		qNVN=await QTS.newVN.fQuery({
 			phone:post_param.phone,
 			type:post_param.type,
 			code:verify_code
 		});
-	if(qNVN.type=="error") 
-		return ERROR(res,{id:"ERR.auth.generate-code.3.5.1",message:"new verify number query failed"});
+	if(qNVN.type=="error") return qDVN.onError(res,"3.5.1","new verify number"); 
 	
 	//#3.6. 새 인증번호 정보 추출
 	var vn_id=qNVN.message.rows[0].id,
-		qVNBI=await QTS.getVerifyNumberById.fQuery({id:vn_id});
-	if(qVNBI.type=="error") 
-		return ERROR(res,{id:"ERR.auth.generate-code.3.6.1",message:"getting verify number query failed"});
-
-	var VN=qVNBI.message.rows[0];
+		qVNBI=await QTS.getVNBI.fQuery({id:vn_id});
+	if(qVNBI.type=="error") return qDVN.onError(res,"3.6.1","getting verify number");  
 	
 	//#3.7. SMS 발송
+	var VN=qVNBI.message.rows[0];
 	console.log(VN);
 	
 	//#3.8 사용자 리턴

@@ -94,8 +94,7 @@ export default async function handler(req,res){
 					provider:data.type
 				});
 		}catch(e){
-			if(qNU.type=="error") 
-				return ERROR(res,{id:"ERR.auth.signup.3.2.3.4.1",message:"user insert query failed"});			
+			return ERROR(res,{id:"ERR.auth.signup.3.2.3.4.1",message:"user insert query failed"});			
 		}
 		
 		return RESPOND(res,qNU);

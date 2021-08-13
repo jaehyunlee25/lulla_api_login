@@ -28,6 +28,7 @@ export default async function handler(req,res){
 	try{
 		var qSEs=await QTS.getSameEmails.fQuery({email:user_info.email});
 	}catch(e){
+		console.log(e);
 		return ERROR(res,{id:"ERR.auth.check-email.3.1",message:"email query failed"});
 	}
 	if(qSEs.message.rows.length>0)

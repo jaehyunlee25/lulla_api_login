@@ -108,6 +108,14 @@ export default async function handler(req,res){
 		}catch(e){
 			return ERROR(res,{id:"ERR.auth.signup.3.2.3.4.1",message:"user insert query failed"});			
 		}
+		//#3.2.3.5 등록된 사용자 정보 추출
+		var user_id=qNU.message.rows[0].id;
+		try{
+			var qUser=await QTS.getUserById.fQuery({id:user_id});
+		}catch(e){
+			return ERROR(res,{id:"ERR.auth.signup.3.2.3.5.1",message:"user not found after user insert"});
+		}
+		USER=qUser.message.rows[0];
 		
 		return RESPOND(res,qNU);
 	}

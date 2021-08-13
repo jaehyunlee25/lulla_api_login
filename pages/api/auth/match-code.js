@@ -23,7 +23,8 @@ export default async function handler(req,res){
 		},
 		data=req.body,
 		post_param=data.verify;
-		
+	//#3.0.1. 전화번호에서 숫자 외의 기호 삭제
+	post_param.phone=post_param.phone.replace(/\-/g,"");
 	//#3.1.
 	try{
 		var qVN=await QTS.getVerifyNumber.fQuery({

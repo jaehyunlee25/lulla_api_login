@@ -27,6 +27,6 @@ values (
 	'',		-- device_token
 	null,		-- token_type 0 안드로이드, 1 애플
 	false,		-- advertise default false
-	''			-- last_login
+	null		-- last_login
 )
 returning id;

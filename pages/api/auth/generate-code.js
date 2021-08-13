@@ -82,7 +82,7 @@ export default async function handler(req,res){
 		console.log(e);
 		return ERROR(res,{id:"ERR.auth.signup.3.6.1",message:"getting verify number query failed"});
 	}
-	var VN=qVNBI.message.row[0];
+	var VN=qVNBI.message.rows[0];
 	
 	//#3.7. SMS 발송
 	console.log(VN);

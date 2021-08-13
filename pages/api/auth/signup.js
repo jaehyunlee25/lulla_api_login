@@ -128,5 +128,9 @@ export default async function handler(req,res){
 	var token=TOKEN(USER);
 		
 	//#3.2.2.5 활성화한 사용자, 토큰, 학원인원을 리턴한다.
-	return RESPOND(res,{token,USER,schoolMembers});
+	return RESPOND(res,{
+		data:{USER,schoolMembers},
+		token:token,
+		resultCode:code
+	});
 };

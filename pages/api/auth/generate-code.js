@@ -37,17 +37,17 @@ export default async function handler(req,res){
 		var qUBP=await QTS.getUserByPhone.fQuery({phone:post_param.phone});
 	}catch(e){
 		console.log(e);
-		return ERROR(res,{id:"ERR.auth.signup.3.2.1",message:"phone user query failed"});
+		return ERROR(res,{id:"ERR.auth.generate-code.3.2.1",message:"phone user query failed"});
 	}
 	if(qUBP.message.rows.length>0)
-		return ERROR(res,{id:"ERR.auth.signup.3.2.2",message:"이미 해당하는 번호를 사용하고 있는 유저가 있습니다."});
+		return ERROR(res,{id:"ERR.auth.generate-code.3.2.2",message:"이미 해당하는 번호를 사용하고 있는 유저가 있습니다."});
 	
 	//#3.3. 이미 등록된 검사번호 체크
 	try{
 		var qVN=await QTS.getVerifyNumber.fQuery({phone:post_param.phone,type:post_param.type});
 	}catch(e){
 		console.log(e);
-		return ERROR(res,{id:"ERR.auth.signup.3.3.1",message:"phone verify query failed"});
+		return ERROR(res,{id:"ERR.auth.generate-code.3.3.1",message:"phone verify query failed"});
 	}
 	
 	//#3.4. 이미 등록된 검사번호 삭제
@@ -57,7 +57,7 @@ export default async function handler(req,res){
 			var qDVN=await QTS.delVerifyNumber.fQuery({id:phone_vn_id});
 		}catch(e){
 			console.log(e);
-			return ERROR(res,{id:"ERR.auth.signup.3.4.1",message:"phone verify number delete query failed"});
+			return ERROR(res,{id:"ERR.auth.generate-code.3.4.1",message:"phone verify number delete query failed"});
 		}
 	}
 	
@@ -71,7 +71,7 @@ export default async function handler(req,res){
 			});
 	}catch(e){
 		console.log(e);
-		return ERROR(res,{id:"ERR.auth.signup.3.5.1",message:"new verify number query failed"});
+		return ERROR(res,{id:"ERR.auth.generate-code.3.5.1",message:"new verify number query failed"});
 	}
 	
 	//#3.6. 새 인증번호 정보 추출
@@ -80,7 +80,7 @@ export default async function handler(req,res){
 		var qVNBI=await QTS.getVerifyNumberById.fQuery({id:vn_id});
 	}catch(e){
 		console.log(e);
-		return ERROR(res,{id:"ERR.auth.signup.3.6.1",message:"getting verify number query failed"});
+		return ERROR(res,{id:"ERR.auth.generate-code.3.6.1",message:"getting verify number query failed"});
 	}
 	var VN=qVNBI.message.rows[0];
 	

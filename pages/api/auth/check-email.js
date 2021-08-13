@@ -16,7 +16,7 @@ export default async function handler(req,res){
 	//#2. preflight 처리
 	if(req.body.length==0) return RESPOND(res,{});
 	//#3. 데이터 처리	
-	setBaseURL("sqls/auth/auth");	//끝에 슬래시 붙이지 마시오.
+	setBaseURL("sqls/auth/signup");	//끝에 슬래시 붙이지 마시오.
 	var QTS={	//Query TemplateS
 			getSameEmails:"getSameEmails"			
 		},

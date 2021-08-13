@@ -1,4 +1,4 @@
-import {RESPOND,ERROR,PASSWORD,TOKEN} from "/lib/apiCommon";	//include String.prototype.fQuery
+import {RESPOND,ERROR} from "/lib/apiCommon";	//include String.prototype.fQuery
 import setBaseURL from "/lib/pgConn";	//include String.prototype.fQuery
 
 export default async function handler(req,res){
@@ -23,8 +23,7 @@ export default async function handler(req,res){
 		data=req.body,
 		user_info=data.user_info;
 		
-	//#3.2.3. 기존의 번호가 없으면, 새로 등록한다.
-	//#3.2.3.1 이메일 중복 체크
+	//#3.1 이메일 중복 체크
 	try{
 		var qSEs=await QTS.getSameEmails.fQuery({email:user_info.email});
 	}catch(e){

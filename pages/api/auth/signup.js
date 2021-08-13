@@ -116,8 +116,6 @@ export default async function handler(req,res){
 			return ERROR(res,{id:"ERR.auth.signup.3.2.3.5.1",message:"user not found after user insert"});
 		}
 		USER=qUser.message.rows[0];
-		
-		return RESPOND(res,qNU);
 	}
 	
 	//#3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.

@@ -26,25 +26,20 @@ export default async function handler(req,res){
 	//#3.0.1. 전화번호에서 숫자 외의 기호 삭제
 	post_param.phone=post_param.phone.replace(/\-/g,"");
 	//#3.1.
-	try{
-		var qVN=await QTS.getVerifyNumber.fQuery({
-				phone:post_param.phone,
-				code:post_param.code,
-				type:post_param.type
-			});
-	}catch(e){
+	var qVN=await QTS.getVerifyNumber.fQuery({
+			phone:post_param.phone,
+			code:post_param.code,
+			type:post_param.type
+		});
+	if(qVN.type=="error") 
 		return ERROR(res,{id:"ERR.auth.match-code.3.1.1",message:"verify code query failed"});
-	}
 	//#3.2.
 	var vn=qVN.message.rows[0];
 	if(vn.type==0){
 		//#3.2.1.
-		try{
-			var qSVN=await QTS.setVerifyNumber.fQuery({id:vn.id});
-		}catch(e){
-			console.log(e);
+		var qSVN=await QTS.setVerifyNumber.fQuery({id:vn.id});
+		if(qSVN.type=="error") 
 			return ERROR(res,{id:"ERR.auth.match-code.3.2.1",message:"verify code update failed"});
-		}
 		//#3.2.2.
 		return RESPOND(res,{
 			message:'휴대폰 인증에 성공하셨습니다.',

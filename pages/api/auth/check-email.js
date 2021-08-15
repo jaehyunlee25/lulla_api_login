@@ -24,12 +24,8 @@ export default async function handler(req,res){
 		user_info=data.user_info;
 		
 	//#3.1 이메일 중복 체크
-	try{
-		var qSEs=await QTS.getSameEmails.fQuery({email:user_info.email});
-	}catch(e){
-		console.log(e);
-		return ERROR(res,{id:"ERR.auth.check-email.3.1",message:"email query failed"});
-	}
+	var qSEs=await QTS.getSameEmails.fQuery({email:user_info.email});
+	if(qSEs.type=="error") return qSEs.onError(res,"3.3.1","phone verify");
 	if(qSEs.message.rows.length>0)
 		return ERROR(res,{id:"ERR.auth.check-email.3.2",message:"이미 사용중인 이메일 주소입니다."});
 

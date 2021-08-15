@@ -1,5 +1,6 @@
 import {RESPOND,ERROR,getRandom} from "/lib/apiCommon";	//include String.prototype.fQuery
 import setBaseURL from "/lib/pgConn";	//include String.prototype.fQuery
+import SMS from "/lib/sms";
 
 export default async function handler(req,res){
 	//회원가입	
@@ -27,13 +28,13 @@ export default async function handler(req,res){
 			newVN:"newVerifyNumber",
 		},
 		data=req.body,
-		post_param=data.verify;
+		postParam=data.verify;
 		
 	//#3.1.1. 전화번호에서 숫자 외의 기호 삭제
-	post_param.phone=post_param.phone.replace(/\-/g,"");
+	postParam.phone=postParam.phone.replace(/\-/g,"");
 	
 	//#3.2. 이미 등록된 전화번호 체크
-	var qUBP=await QTS.getUBP.fQuery({phone:post_param.phone});
+	var qUBP=await QTS.getUBP.fQuery({phone:postParam.phone});
 	if(qUBP.type=="error") return qUBP.onError(res,"3.2.1","phone user");
 	if(qUBP.message.rows.length>0)
 		return ERROR(res,{
@@ -42,7 +43,7 @@ export default async function handler(req,res){
 		});
 	
 	//#3.3. 이미 등록된 검사번호 체크
-	var qVN=await QTS.getVN.fQuery({phone:post_param.phone,type:post_param.type});
+	var qVN=await QTS.getVN.fQuery({phone:postParam.phone,type:postParam.type});
 	if(qVN.type=="error") return qVN.onError(res,"3.3.1","phone verify");
 	
 	//#3.4. 이미 등록된 검사번호 삭제
@@ -55,8 +56,8 @@ export default async function handler(req,res){
 	//#3.5. 새 인증번호 등록
 	var verify_code=getRandom(1000,9999),
 		qNVN=await QTS.newVN.fQuery({
-			phone:post_param.phone,
-			type:post_param.type,
+			phone:postParam.phone,
+			type:postParam.type,
 			code:verify_code
 		});
 	if(qNVN.type=="error") return qDVN.onError(res,"3.5.1","new verify number"); 
@@ -67,8 +68,13 @@ export default async function handler(req,res){
 	if(qVNBI.type=="error") return qDVN.onError(res,"3.6.1","getting verify number");  
 	
 	//#3.7. SMS 발송
-	var VN=qVNBI.message.rows[0];
-	console.log(VN);
+	var VN=qVNBI.message.rows[0],
+		qSms;
+	try{
+		qSms=await SMS({vc:verify_code,phone:postParam.phone});
+	}catch(e){
+		return ERROR(res,{id:"ERR.auth.signup.generate.code.3.7",message:"sending sms failed"});
+	}
 	
 	//#3.8 사용자 리턴
 	return RESPOND(res,{

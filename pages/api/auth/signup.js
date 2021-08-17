@@ -123,6 +123,7 @@ export default async function handler(req, res) {
     else procSocial(res, data);
   } catch (e) {
     console.log(e);
+    return;
   }
 
   // #3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.

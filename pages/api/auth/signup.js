@@ -117,7 +117,7 @@ export default async function handler(req, res) {
   // #3.2. 작업
   setBaseURL('sqls/auth/signup'); // 끝에 슬래시 붙이지 마시오.
   const data = req.body;
-  
+
   let result;
   if (data.type === 'local') {
     result = await procLocal(res, data);

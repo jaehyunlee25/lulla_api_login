@@ -1,4 +1,4 @@
-import { RESPOND } from '../../../lib/apiCommon';
+import { RESPOND, ERROR } from '../../../lib/apiCommon';
 import setBaseURL from '../../../lib/pgConn'; // include String.prototype.fQuery
 
 export default async function handler(req, res) {
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     type: postParam.type,
   });
   if (qVN.type === 'error') return qVN.onError(res, '3.1.1', 'verify code');
-  if (qSEs.message.rows.length > 0)
+  if (qVN.message.rows.length > 0)
     return ERROR(res, {
       id: 'ERR.auth.signup.3.1',
       message: 'no phon number matched',

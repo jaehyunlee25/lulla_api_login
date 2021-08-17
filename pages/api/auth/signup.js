@@ -154,11 +154,12 @@ export default async function handler(req, res) {
   setBaseURL('sqls/auth/signup'); // 끝에 슬래시 붙이지 마시오.
   const data = req.body;
 
-  const userInfo = (data.type === 'local')
-    ? await procLocal(res, data)
-    : await procSocial(res, data); // 결국, 이메일 주소를 추출하는 과정이다.
+  const userInfo = 
+    data.type === 'local'
+      ? await procLocal(res, data)
+      : await procSocial(res, data); // 결국, 이메일 주소를 추출하는 과정이다.
   if (result === 'error') return false;
-  
+
   // #3.2.4.1 이메일 중복 체크
   const qSEs = await QTS.getSameEmails.fQuery({ email: userInfo.email });
   if (qSEs.type === 'error')

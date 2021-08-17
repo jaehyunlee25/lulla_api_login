@@ -37,7 +37,7 @@ export default async function handler(req, res) {
   if (qVN.message.rows.length === 0)
     return ERROR(res, {
       id: 'ERR.auth.signup.3.1',
-      message: 'no phon number matched',
+      message: 'no code & phon number matched',
     });
   // #3.2.
   const vn = qVN.message.rows[0];

@@ -150,7 +150,7 @@ export default async function handler(req, res) {
   if (req.body.length === 0) return RESPOND(res, {});
   // #3. 데이터 처리
   // #3.1. 비밀번호 처리 우선
-  if ( req.body.user_info.password )
+  if (req.body.user_info.password)
     req.body.user_info.password = await PASSWORD(req.body.user_info.password);
   // #3.2. 작업
   setBaseURL('sqls/auth/signup'); // 끝에 슬래시 붙이지 마시오.
@@ -187,7 +187,7 @@ export default async function handler(req, res) {
   if (qUser.type === 'error')
     return qUser.onError(res, '3.2.4.2.1', 'search user after user insert');
   [USER] = qUser.message.rows;
-  
+
   // #3.2.4.4 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
   const qSchoolMembers = await QTS.getSchoolMember.fQuery({ userId: USER.id });
   if (qSchoolMembers.type === 'error')

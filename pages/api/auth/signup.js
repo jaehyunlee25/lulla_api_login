@@ -17,7 +17,6 @@ const QTS = {
   newUser: 'newUser',
 };
 async function procSocial(res, data) {
-  console.log('social');
   // #3.3. 소셜로그인 기능을 사용한다.
   const { access_token: accessToken, user_info: userInfo, type } = data;
   userInfo.password = null;
@@ -47,7 +46,7 @@ async function procSocial(res, data) {
       return ERROR(res, {
         id: 'ERR.auth.signup.social.3.3.1',
         message:
-          '카카오 정보 요청에 실패하였습니다. access_token을 확인해주세요',
+          '${type} 정보 요청에 실패하였습니다. access_token을 확인해주세요'.proc({ type }),
         resultCode: 401,
       });
     }

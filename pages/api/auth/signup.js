@@ -13,11 +13,12 @@ const QTS = {
   getVerifyNumber: 'getVerifyNumber',
   newUser: 'newUser',
 };
-function procSocial(res, data){
+function procSocial(res, data) {
   const DATA=data;
-  return res;
+  res;
+  return DATA;
 };
-async function procLocal(res, data){
+async function procLocal(res, data) {
   const { user_info: userInfo } = data;
   // #3.2.1. 전화번호를 바탕으로 기존 사용자가 있는지 찾아본다.
   const qUsers = await QTS.getWasUsers.fQuery({

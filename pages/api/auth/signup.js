@@ -15,9 +15,8 @@ const QTS = {
 };
 function procSocial(res, data) {
   const DATA = data;
-  const RES = res;
-  return DATA;
-};
+  return res.end(DATA);
+}
 async function procLocal(res, data) {
   const { user_info: userInfo } = data;
   // #3.2.1. 전화번호를 바탕으로 기존 사용자가 있는지 찾아본다.
@@ -98,7 +97,7 @@ async function procLocal(res, data) {
     [USER] = qUser.message.rows;
   }
   return false;
-};
+}
 export default async function handler(req, res) {
   // 회원가입
   // 기능: : 탈퇴회원 활성화,  혹은 신규멤버 등록 및 보안토큰 발행,  관련멤버명단 추출
@@ -119,7 +118,7 @@ export default async function handler(req, res) {
   setBaseURL('sqls/auth/signup'); // 끝에 슬래시 붙이지 마시오.
   const data = req.body;
 
-  if (data.type == 'local') procLocal(res, data);
+  if (data.type === 'local') procLocal(res, data);
   else procSocial(res, data);
 
   // #3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
@@ -136,4 +135,3 @@ export default async function handler(req, res) {
     resultCode: 200,
   });
 }
-

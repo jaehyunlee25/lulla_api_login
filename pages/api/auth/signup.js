@@ -14,8 +14,8 @@ const QTS = {
   newUser: 'newUser',
 };
 function procSocial(res, data) {
-  const DATA=data;
-  res;
+  const DATA = data;
+  const RES = res;
   return DATA;
 };
 async function procLocal(res, data) {

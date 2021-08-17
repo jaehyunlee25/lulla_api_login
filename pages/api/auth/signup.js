@@ -34,8 +34,8 @@ export default async function handler(req, res) {
   setBaseURL('sqls/auth/signup'); // 끝에 슬래시 붙이지 마시오.
   const data = req.body;
 
-  if (data.type == 'local') procLocal(data);
-  else procSocial(data);
+  if (data.type == 'local') procLocal(res, data);
+  else procSocial(res, data);
 
   
   // #3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
@@ -52,7 +52,9 @@ export default async function handler(req, res) {
     resultCode: 200,
   });
 }
-async function procLocal(data){
+async function procSocial(res, data){
+}
+async function procLocal(res, data){
   const { user_info: userInfo } = data;
   // #3.2.1. 전화번호를 바탕으로 기존 사용자가 있는지 찾아본다.
   const qUsers = await QTS.getWasUsers.fQuery({

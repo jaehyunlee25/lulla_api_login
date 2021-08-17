@@ -34,4 +34,5 @@ yarn-error.log*
 .vercel
 
 #shell script
-exec.batz
+exec.sh
+exec.bat

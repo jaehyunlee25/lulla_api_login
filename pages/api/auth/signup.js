@@ -1,7 +1,7 @@
-import { RESPOND, ERROR, PASSWORD, TOKEN } from '../../../lib/apiCommon'; // include String.prototype.fQuery
-import setBaseURL from '../../../lib/pgConn'; // include String.prototype.fQuery
 import axios from 'axios';
 import admin from 'firebase-admin';
+import { RESPOND, ERROR, PASSWORD, TOKEN } from '../../../lib/apiCommon'; // include String.prototype.fQuery
+import setBaseURL from '../../../lib/pgConn'; // include String.prototype.fQuery
 
 let USER;
 const QTS = {
@@ -17,13 +17,10 @@ const QTS = {
 };
 async function procSocial(res, data) {
   // #3.3. 소셜로그인 기능을 사용한다.
-  const {
-    access_token: accessToken,
-    user_info: userInfo,
-    type,
-  } = data;
+  const { access_token: accessToken, user_info: userInfo, type }
+    = data;
   userInfo.password = null;
-  const region = (type === 'kakao' || type === 'naver' ) ? 'local' : 'abroad';
+  const region = type === 'kakao' || type === 'naver' ? 'local' : 'abroad';
   const options = {
     kakao: {
       address: 'https://kapi.kakao.com/v2/user/me',

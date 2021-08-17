@@ -34,7 +34,11 @@ export default async function handler(req, res) {
     type: postParam.type,
   });
   if (qVN.type === 'error') return qVN.onError(res, '3.1.1', 'verify code');
-
+  if (qSEs.message.rows.length > 0)
+    return ERROR(res, {
+      id: 'ERR.auth.signup.3.1',
+      message: 'no phon number matched',
+    });
   // #3.2.
   const vn = qVN.message.rows[0];
   // 신규가입일 때,

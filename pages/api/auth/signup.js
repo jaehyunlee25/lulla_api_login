@@ -34,7 +34,7 @@ export default async function handler(req, res) {
   setBaseURL('sqls/auth/signup'); // 끝에 슬래시 붙이지 마시오.
   const data = req.body;
 
-  if (data.type = 'local') procLocal(data);
+  if (data.type == 'local') procLocal(data);
   else procSocial(data);
 
   

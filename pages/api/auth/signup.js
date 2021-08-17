@@ -120,7 +120,7 @@ export default async function handler(req, res) {
 
   if (data.type === 'local') {
     const result = await procLocal(res, data);
-    if (result === 'error' ) return false;
+    if (result === 'error') return false;
   } else {
     procSocial(res, data);
   }

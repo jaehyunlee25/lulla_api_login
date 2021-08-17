@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 import axios from 'axios';
 import admin from 'firebase-admin';
 import { RESPOND, ERROR, PASSWORD, TOKEN } from '../../../lib/apiCommon'; // include String.prototype.fQuery

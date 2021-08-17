@@ -13,7 +13,9 @@ const QTS = {
   getVerifyNumber: 'getVerifyNumber',
   newUser: 'newUser',
 };
-async function procSocial(res, data){
+function procSocial(res, data){
+  const DATA=data;
+  return res;
 };
 async function procLocal(res, data){
   const { user_info: userInfo } = data;
@@ -94,6 +96,7 @@ async function procLocal(res, data){
       return qUser.onError(res, '3.2.3.5.1', 'search user after user insert');
     [USER] = qUser.message.rows;
   }
+  return false;
 };
 export default async function handler(req, res) {
   // 회원가입

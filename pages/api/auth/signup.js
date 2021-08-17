@@ -37,15 +37,16 @@ async function procSocial(res, data) {
     // #3.3.1 카카오와 네이버의 경우 openapi를 사용한다.
     try {
       const response = await axios({
-          method: 'GET',
-          url: option.address,
-          headers: { Authorization },
+        method: 'GET',
+        url: option.address,
+        headers: { Authorization },
       });
       userInfo.email = response.data[option.suffix].email;
     } catch (e) {
       return ERROR(res, {
         id: 'ERR.auth.signup.social.3.3.1',
-        message: '카카오 정보 요청에 실패하였습니다. access_token을 확인해주세요',
+        message:
+          '카카오 정보 요청에 실패하였습니다. access_token을 확인해주세요',
         resultCode: 401,
       });
     }
@@ -53,11 +54,12 @@ async function procSocial(res, data) {
     // #3.3.2 구글과 애플의 경우 firebase를 사용한다.
     // #3.3.2.1 토큰을 검증한다.
     try {
-      const response = await admin.auth().verifyIdToken(id_token);
+      const response = await admin.auth().verifyIdToken(accessToken);
       userInfo.email = response.email;
     } catch (e) {
       return ERROR(res, {
-        id: 'ERR.auth.signup.social.3.2.1',
+        id:
+          'ERR.auth.signup.social.3.2.1',
         message: 'Firebase에서 데이터 정보를 가져올 수 없습니다. access_token을 확인해주세요',
         resultCode: 401,
       });
@@ -111,7 +113,6 @@ async function procLocal(res, data) {
   } else {
     // 신규회원 창설
     // 주로 정보의 중복이나 검증에 관한 작업이다.
-    
     // #3.2.3.2 전화번호 중복 체크
     const qSPs = await QTS.getSamePhones.fQuery({ phone: userInfo.phone });
     if (qSPs.type === 'error')

@@ -1,6 +1,19 @@
 import { RESPOND, ERROR, PASSWORD, TOKEN } from '../../../lib/apiCommon'; // include String.prototype.fQuery
 import setBaseURL from '../../../lib/pgConn'; // include String.prototype.fQuery
 
+let USER;
+const QTS = {
+  // Query TemplateS
+  getWasUsers: 'getWasUsers',
+  setUser: 'setUser',
+  getSchoolMember: 'getSchoolMember',
+  getUserById: 'getUserById',
+  getSameEmails: 'getSameEmails',
+  getSamePhones: 'getSamePhones',
+  getVerifyNumber: 'getVerifyNumber',
+  newUser: 'newUser',
+};
+
 export default async function handler(req, res) {
   // 회원가입
   // 기능: : 탈퇴회원 활성화,  혹은 신규멤버 등록 및 보안토큰 발행,  관련멤버명단 추출
@@ -19,19 +32,27 @@ export default async function handler(req, res) {
   req.body.user_info.password = await PASSWORD(req.body.user_info.password);
   // #3.2. 작업
   setBaseURL('sqls/auth/signup'); // 끝에 슬래시 붙이지 마시오.
-  let USER;
-  const QTS = {
-    // Query TemplateS
-    getWasUsers: 'getWasUsers',
-    setUser: 'setUser',
-    getSchoolMember: 'getSchoolMember',
-    getUserById: 'getUserById',
-    getSameEmails: 'getSameEmails',
-    getSamePhones: 'getSamePhones',
-    getVerifyNumber: 'getVerifyNumber',
-    newUser: 'newUser',
-  };
   const data = req.body;
+
+  if (data.type = 'local') procLocal(data);
+  else procSocial(data);
+
+  
+  // #3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
+  const qSchoolMembers = await QTS.getSchoolMember.fQuery({ userId: USER.id });
+  if (qSchoolMembers.type === 'error')
+    return qSchoolMembers.onError(res, '5', 'schoolMembers');
+  const schoolMembers = qSchoolMembers.message.rows;
+  // #3.2.2.4 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.
+  const token = TOKEN(USER);
+  // #3.2.2.5 활성화한 사용자,  토큰,  학원인원을 리턴한다.
+  return RESPOND(res, {
+    data: { USER, schoolMembers },
+    token: token,
+    resultCode: 200,
+  });
+}
+function procLocal(data){
   const { user_info: userInfo } = data;
   // #3.2.1. 전화번호를 바탕으로 기존 사용자가 있는지 찾아본다.
   const qUsers = await QTS.getWasUsers.fQuery({
@@ -110,17 +131,4 @@ export default async function handler(req, res) {
       return qUser.onError(res, '3.2.3.5.1', 'search user after user insert');
     [USER] = qUser.message.rows;
   }
-  // #3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
-  const qSchoolMembers = await QTS.getSchoolMember.fQuery({ userId: USER.id });
-  if (qSchoolMembers.type === 'error')
-    return qSchoolMembers.onError(res, '5', 'schoolMembers');
-  const schoolMembers = qSchoolMembers.message.rows;
-  // #3.2.2.4 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.
-  const token = TOKEN(USER);
-  // #3.2.2.5 활성화한 사용자,  토큰,  학원인원을 리턴한다.
-  return RESPOND(res, {
-    data: { USER, schoolMembers },
-    token: token,
-    resultCode: 200,
-  });
 }

@@ -52,7 +52,7 @@ export default async function handler(req, res) {
     resultCode: 200,
   });
 }
-function procLocal(data){
+async function procLocal(data){
   const { user_info: userInfo } = data;
   // #3.2.1. 전화번호를 바탕으로 기존 사용자가 있는지 찾아본다.
   const qUsers = await QTS.getWasUsers.fQuery({

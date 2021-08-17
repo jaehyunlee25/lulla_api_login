@@ -118,8 +118,12 @@ export default async function handler(req, res) {
   setBaseURL('sqls/auth/signup'); // 끝에 슬래시 붙이지 마시오.
   const data = req.body;
 
-  if (data.type === 'local') procLocal(res, data);
-  else procSocial(res, data);
+  try {
+    if (data.type === 'local') await procLocal(res, data);
+    else procSocial(res, data);
+  } catch (e) {
+    console.log(e);
+  }
 
   // #3.2.2.3 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
   const qSchoolMembers = await QTS.getSchoolMember.fQuery({ userId: USER.id });

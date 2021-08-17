@@ -17,8 +17,7 @@ const QTS = {
 };
 async function procSocial(res, data) {
   // #3.3. 소셜로그인 기능을 사용한다.
-  const { access_token: accessToken, user_info: userInfo, type }
-    = data;
+  const { access_token: accessToken, user_info: userInfo, type } = data;
   userInfo.password = null;
   const region = type === 'kakao' || type === 'naver' ? 'local' : 'abroad';
   const options = {

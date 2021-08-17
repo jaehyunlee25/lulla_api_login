@@ -47,7 +47,7 @@ async function procSocial(res, data) {
         id: 'ERR.auth.signup.social.3.3.1',
         message:
           '${type} 정보 요청에 실패하였습니다. access_token을 확인해주세요'.proc(
-            { type, }
+            { type },
           ),
         resultCode: 401,
       });

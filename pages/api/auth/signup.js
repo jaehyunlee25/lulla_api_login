@@ -28,11 +28,11 @@ async function procSocial(res, data) {
     kakao: {
       address: 'https://kapi.kakao.com/v2/user/me',
       suffix: 'kakao_account',
-    }
+    },
     naver: {
       address: 'https://openapi.naver.com/v1/nid/me',
       suffix: 'response',
-    }
+    },
   };
   const option = options[type];
   const Authorization = 'Bearer ${accessToken}'.proc({ accessToken });

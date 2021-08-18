@@ -66,18 +66,7 @@ async function procSocial(res, data) {
         resultCode: 401,
       });
     }
-    // #3.3.3.1 이메일 중복 체크
-    // 카카오의 경우 법인 서류 등록 후 이메일 주소 추출 가능
-    const qSEs = await QTS.getSameEmails.fQuery({ email: userInfo.email });
-    if (qSEs.type === 'error')
-      return qSEs.onError(res, '3.2.3.1', 'search email');
-    if (qSEs.message.rows.length > 0)
-      return ERROR(res, {
-        id: 'ERR.auth.signup.3.2.3.1.2',
-        message: 'same email existing',
-      });
   }
-
   return userInfo;
 }
 async function procLocal(res, data) {
@@ -182,6 +171,7 @@ export default async function handler(req, res) {
     provider: data.type,
   });
   if (qNU.type === 'error') return qNU.onError(res, '3.2.4.2.1', 'user insert');
+
   // #3.2.4.3 등록된 사용자 정보 추출
   const userId = qNU.message.rows[0].id;
   const qUser = await QTS.getUserById.fQuery({ id: userId });
@@ -194,8 +184,10 @@ export default async function handler(req, res) {
   if (qSchoolMembers.type === 'error')
     return qSchoolMembers.onError(res, '5', 'schoolMembers');
   const schoolMembers = qSchoolMembers.message.rows;
+
   // #3.2.4.5 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.
   const token = TOKEN(USER);
+
   // #3.2.4.6 활성화한 사용자,  토큰,  학원인원을 리턴한다.
   return RESPOND(res, {
     data: { USER, schoolMembers },

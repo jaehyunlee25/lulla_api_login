@@ -1,7 +1,11 @@
 /* eslint-disable no-template-curly-in-string */
-import axios from 'axios';
-import admin from 'firebase-admin';
-import { RESPOND, ERROR, PASSWORD, TOKEN } from '../../../lib/apiCommon'; // include String.prototype.fQuery
+import {
+  RESPOND,
+  ERROR,
+  SOCIAL,
+  PASSWORD,
+  TOKEN,
+} from '../../../lib/apiCommon'; // include String.prototype.fQuery
 import setBaseURL from '../../../lib/pgConn'; // include String.prototype.fQuery
 
 let USER;
@@ -18,55 +22,13 @@ const QTS = {
 };
 async function procSocial(res, data) {
   // #3.3. 소셜로그인 기능을 사용한다.
-  const { access_token: accessToken, user_info: userInfo, type } = data;
+  const { user_info: userInfo } = data;
   userInfo.password = null;
-  const region = type === 'kakao' || type === 'naver' ? 'local' : 'abroad';
-  const options = {
-    kakao: {
-      address: 'https://kapi.kakao.com/v2/user/me',
-      suffix: 'kakao_account',
-    },
-    naver: {
-      address: 'https://openapi.naver.com/v1/nid/me',
-      suffix: 'response',
-    },
-  };
-  const option = options[type];
-  const Authorization = 'Bearer ${accessToken}'.proc({ accessToken });
-  if (region === 'local') {
-    // #3.3.1 카카오와 네이버의 경우 openapi를 사용한다.
-    try {
-      const response = await axios({
-        method: 'GET',
-        url: option.address,
-        headers: { Authorization },
-      });
-      userInfo.email = response.data[option.suffix].email;
-    } catch (e) {
-      return ERROR(res, {
-        id: 'ERR.auth.signup.social.3.3.1',
-        message:
-          '${type} 정보 요청에 실패하였습니다. access_token을 확인해주세요'.proc(
-            { type },
-          ),
-        resultCode: 401,
-      });
-    }
-  } else if (region === 'abroad') {
-    // #3.3.2 구글과 애플의 경우 firebase를 사용한다.
-    // #3.3.2.1 토큰을 검증한다.
-    try {
-      const response = await admin.auth().verifyIdToken(accessToken);
-      userInfo.email = response.email;
-    } catch (e) {
-      return ERROR(res, {
-        id: 'ERR.auth.signup.social.3.2.1',
-        message:
-          'Firebase에서 데이터 정보를 가져올 수 없습니다. access_token을 확인해주세요',
-        resultCode: 401,
-      });
-    }
-  }
+  // #3.3.1 소셜로그인 기능을 사용하여 email 주소를 추출한다.
+  const qEmail = await SOCIAL(res, data);
+  if (qEmail.type === 'error') return ERROR(res, qEmail.message);
+  userInfo.email = qEmail.message;
+
   return userInfo;
 }
 async function procLocal(res, data) {
@@ -77,10 +39,8 @@ async function procLocal(res, data) {
     activated: false,
   });
   if (qUsers.type === 'error')
-    return ERROR(res, {
-      id: 'ERR.auth.signup.1',
-      message: 'user not found',
-    });
+    return qUsers.onError(res, '3.2.1.1', 'searching a user');
+
   const wasUsers = qUsers.message.rows;
   // #3.2.2. 기존의 번호가 있으면,  탈퇴한 번호를 재활용한다.
   if (wasUsers.length > 0) {
@@ -162,7 +122,7 @@ export default async function handler(req, res) {
       message: 'same email existing',
     });
 
-  // #3.2.4.2 등록절차
+  // #3.2.4.2 신규 등록절차
   const qNU = await QTS.newUser.fQuery({
     name: userInfo.name,
     email: userInfo.email,

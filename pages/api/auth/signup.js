@@ -13,7 +13,7 @@ const QTS = {
   // Query TemplateS
   getWasUsers: 'getWasUsers',
   setUser: 'setUser',
-  getSchoolMember: 'getSchoolMember',
+  getUserProfiles: 'getUserProfiles',
   getUserById: 'getUserById',
   getSameEmails: 'getSameEmails',
   getSamePhones: 'getSamePhones',
@@ -140,10 +140,10 @@ export default async function handler(req, res) {
   [USER] = qUser.message.rows;
 
   // #3.2.4.4 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
-  const qSchoolMembers = await QTS.getSchoolMember.fQuery({ userId: USER.id });
-  if (qSchoolMembers.type === 'error')
-    return qSchoolMembers.onError(res, '5', 'schoolMembers');
-  const schoolMembers = qSchoolMembers.message.rows;
+  const qUserProfiles = await QTS.getUserProfiles.fQuery({ userId: USER.id });
+  if (qUserProfiles.type === 'error')
+    return qUserProfiles.onError(res, '5', 'schoolMembers');
+  const schoolMembers = qUserProfiles.message.rows;
 
   // #3.2.4.5 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.
   const token = TOKEN(USER);

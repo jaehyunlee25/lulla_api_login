@@ -14,7 +14,7 @@ const QTS = {
   // Query TemplateS
   getSameEmails: 'getSameEmails',
   setLastLogin: 'setLastLogin',
-  getSchoolMember: 'getSchoolMember',
+  getUserProfiles: 'getUserProfiles',
 };
 async function procSocial(res, data) {
   // #3.3. 소셜로그인 기능을 사용한다.
@@ -101,11 +101,11 @@ export default async function handler(req, res) {
   });
   if (qSLL.type === 'error') return qSLL.onError(res, '3.2.3', 'set user info');
 
-  // #3.2.4. 활성화한 사용자의 정보를 바탕으로 관련된 학원 인원 명단을 추출한다.
-  const qSchoolMembers = await QTS.getSchoolMember.fQuery({ userId: USER.id });
-  if (qSchoolMembers.type === 'error')
-    return qSchoolMembers.onError(res, '5', 'schoolMembers');
-  const schoolMembers = qSchoolMembers.message.rows;
+  // #3.2.4. 활성화한 사용자의 정보를 바탕으로 사용자 프로필을 추출한다.
+  const qUserProfiles = await QTS.getUserProfiles.fQuery({ userId: USER.id });
+  if (qUserProfiles.type === 'error')
+    return qUserProfiles.onError(res, '5', 'schoolMembers');
+  const schoolMembers = qUserProfiles.message.rows;
 
   // #3.2.4.5 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.
   const token = TOKEN(USER);

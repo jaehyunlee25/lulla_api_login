@@ -57,7 +57,7 @@ export default async function handler(req, res) {
     return qInit.onError(res, '3.1.5', 'signout', 500);
 
   // #3.1.6. 활성화한 사용자의 정보를 바탕으로 사용자 프로필을 추출한다.
-  const qUserProfiles = await QTS.getUserProfiles.fQuery({ userId: USER.id });
+  const qUserProfiles = await QTS.getUserProfiles.fQuery({ userId: user.id });
   if (qUserProfiles.type === 'error')
     return qUserProfiles.onError(res, '3.1.6', 'UserProfiles');
   const schoolMembers = qUserProfiles.message.rows;

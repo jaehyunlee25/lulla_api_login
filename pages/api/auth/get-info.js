@@ -4,8 +4,7 @@ import setBaseURL from '../../../lib/pgConn'; // include String.prototype.fQuery
 
 const QTS = {
   // Query TemplateS
-  getUBI: 'getUsers',
-  initUser: 'userInitialize',
+  getUBI: 'getUserById',
   getUserProfiles: 'getUserProfiles',
 };
 export default async function handler(req, res) {
@@ -50,16 +49,11 @@ export default async function handler(req, res) {
       message: '토큰 사용자가 존재하지 않습니다.',
     });
 
-  // #3.1.5 사용자 정보 초기화
+  // #3.1.5. 활성화한 사용자의 정보를 바탕으로 사용자 프로필을 추출한다.
   const [user] = qUser.message.rows;
-  const qInit = await QTS.initUser.fQuery({ id: user.id });
-  if (qInit.type === 'error')
-    return qInit.onError(res, '3.1.5', 'signout', 500);
-
-  // #3.1.6. 활성화한 사용자의 정보를 바탕으로 사용자 프로필을 추출한다.
   const qUserProfiles = await QTS.getUserProfiles.fQuery({ userId: user.id });
   if (qUserProfiles.type === 'error')
-    return qUserProfiles.onError(res, '3.1.6', 'UserProfiles');
+    return qUserProfiles.onError(res, '3.1.5', 'UserProfiles');
   const schoolMembers = qUserProfiles.message.rows;
 
   // #3.2 활성화한 사용자,  토큰,  학원인원을 리턴한다.

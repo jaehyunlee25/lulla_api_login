@@ -24,7 +24,7 @@ async function procSocial(res, data) {
   const email = qEmail.message;
   // #3.3.2 이메일을 바탕으로 기존 사용자가 있는지 찾아본다.
   const qUsers = await QTS.getSameEmails.fQuery({
-    email: email,
+    email,
     activated: true,
   });
   if (qUsers.type === 'error')
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
   // #3.2.3. user의 로그인 정보를 갱신한다.
   const today = moment().tz('Asia/Seoul').format('YYYY-MM-DD');
   const qSLL = await QTS.setLastLogin.fQuery({
-    today: today,
+    today,
     id: USER.id,
   });
   if (qSLL.type === 'error') return qSLL.onError(res, '3.2.3', 'set user info');
@@ -114,7 +114,7 @@ export default async function handler(req, res) {
   return RESPOND(res, {
     // eslint-disable-next-line object-shorthand
     data: { user: USER, schoolMembers },
-    token: token,
+    token,
     resultCode: 200,
   });
 }

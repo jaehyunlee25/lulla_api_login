@@ -8,8 +8,8 @@ export default async function handler(req, res) {
     'Access-Control-Allow-Headers': ['Content-Type', 'Authorization'], // for application/json
     'Access-Control-Allow-Methods': 'GET',
   });
-  // #2. preflight 처리
-  if (req.body.length === 0) return RESPOND(res, {});
+  // #2. preflight 처리(OPTIONS 로 처리) :: GET일 땐 처리하지 않는다.
+  // if (req.method === 'OPTIONS') return RESPOND(res, {});
   // #2. 작업
   try {
     return await main(req, res);
@@ -35,10 +35,7 @@ async function main(req, res) {
 
   // #3.1.3 토큰에서 사용자 id 추출
   const { id: userId } = qToken.message;
-  console.log({
-    userId,
-    resultCode: 200,
-  });
+
   // #3.2 처리결과를 리턴한다.
   return RESPOND(res, {
     userId,

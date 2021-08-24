@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   if (req.body.length === 0) return RESPOND(res, {});
   // #2. 작업
   try {
-    return main(req, res);
+    return await main(req, res);
   } catch (e) {
     return ERROR(res, {
       id: 'ERR.auth.signup.setPassword.3',

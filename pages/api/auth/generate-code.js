@@ -37,7 +37,12 @@ export default async function handler(req, res) {
   // #3.2. 이미 등록된 전화번호 체크
   const qUBP = await QTS.getUBP.fQuery({ phone: postParam.phone });
   if (qUBP.type === 'error') return qUBP.onError(res, '3.2.1', 'phone user');
-  if (qUBP.message.rows.length > 0)
+  if (
+    qUBP.message.rows.length > 0 &&
+    // postParam.type
+    // 0: 회원가입 시인증, 1: 이메일 찾기 시 인증, 2: 비밀번호 재설정 시 인증, 3 휴대폰 번호
+    (postParam.type === 3 || postParam.type === 0)
+  )
     return ERROR(res, {
       id: 'ERR.auth.generate-code.3.2.2',
       message: '이미 해당하는 번호를 사용하고 있는 유저가 있습니다.',

@@ -12,7 +12,7 @@ import setBaseURL from '../../../lib/pgConn'; // include String.prototype.fQuery
 let USER;
 const QTS = {
   // Query TemplateS
-  getSameEmails: 'getSameEmails',
+  getUserByEmailAndProvider: 'getUserByEmailAndProvider',
   setLastLogin: 'setLastLogin',
   getUserProfiles: 'getUserProfiles',
 };
@@ -23,8 +23,9 @@ async function procSocial(res, data) {
   if (qEmail.type === 'error') return ERROR(res, qEmail.message);
   const email = qEmail.message;
   // #3.3.2 이메일을 바탕으로 기존 사용자가 있는지 찾아본다.
-  const qUsers = await QTS.getSameEmails.fQuery({
+  const qUsers = await QTS.getUserByEmailAndProvider.fQuery({
     email,
+    type,
     activated: true,
   });
   if (qUsers.type === 'error')
@@ -43,7 +44,7 @@ async function procLocal(res, data) {
   const { user_info: userInfo } = data;
   // #3.2.1. 이메일을 바탕으로 기존 사용자가 있는지 찾아본다.
   // 이메일이 존재하고, 활성화되어 있어야 한다.
-  const qUsers = await QTS.getSameEmails.fQuery({
+  const qUsers = await QTS.getUserByEmailAndProvider.fQuery({
     email: userInfo.email,
     activated: true,
   });

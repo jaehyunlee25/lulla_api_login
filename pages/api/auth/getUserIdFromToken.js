@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   res.writeHead(200, {
     'Access-Control-Allow-Origin': '*', // for same origin policy
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Headers': ['Content-Type', 'authorization'], // for application/json
+    'Access-Control-Allow-Headers': ['Content-Type', 'Authorization'], // for application/json
     'Access-Control-Allow-Methods': 'GET',
   });
   // #2. preflight 처리
@@ -35,7 +35,10 @@ async function main(req, res) {
 
   // #3.1.3 토큰에서 사용자 id 추출
   const { id: userId } = qToken.message;
-
+  console.log({
+    userId,
+    resultCode: 200,
+  });
   // #3.2 처리결과를 리턴한다.
   return RESPOND(res, {
     userId,

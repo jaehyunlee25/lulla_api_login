@@ -14,13 +14,13 @@ export default async function handler(req, res) {
     'Access-Control-Allow-Origin': '*', // for same origin policy
     'Content-Type': 'application/json',
     'Access-Control-Allow-Headers': ['Content-Type', 'authorization'], // for application/json
-    'Access-Control-Allow-Methods': 'POST',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
   });
   // #2. preflight 처리
-  if (req.body.length === 0) return RESPOND(res, {});
-  // #2. 작업
+  if (req.method === 'OPTIONS') return RESPOND(res, {});
+  // #3. 작업
   try {
-    return main(req, res);
+    return await main(req, res);
   } catch (e) {
     return ERROR(res, {
       resultCode: 500,

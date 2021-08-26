@@ -6,6 +6,7 @@ const QTS = {
   // Query TemplateS
   getVNBP: 'getVerifyNumberByPhone',
   gUBP: 'getUserByPhone',
+  setPasswordById: 'setPasswordById',
 };
 export default async function handler(req, res) {
   // 회원조회
@@ -26,6 +27,7 @@ export default async function handler(req, res) {
       resultCode: 500,
       id: 'ERR.auth.signup.resetPassword.3',
       message: '비밀번호 재설정에 오류 발생',
+      error: e.toString(),
     });
   }
 }

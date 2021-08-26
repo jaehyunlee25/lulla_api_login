@@ -36,5 +36,5 @@ join users u on u.id = m.user_id
 left join kid k on m.kid_id = k.id
 
 where 
-	m.school_id = '${userId}' 
+	m.user_id = '${userId}' 
 	and m.is_active is true;

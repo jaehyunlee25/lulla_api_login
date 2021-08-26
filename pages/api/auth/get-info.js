@@ -58,7 +58,7 @@ export default async function handler(req, res) {
 
   // #3.2 활성화한 사용자,  토큰,  학원인원을 리턴한다.
   return RESPOND(res, {
-    data: { user, schoolMembers },
+    data: { user, school_member: schoolMembers },
     token,
     resultCode: 200,
   });

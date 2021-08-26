@@ -41,11 +41,12 @@ async function procSocial(res, data) {
   return user;
 }
 async function procLocal(res, data) {
-  const { user_info: userInfo } = data;
+  const { user_info: userInfo, type } = data;
   // #3.2.1. 이메일을 바탕으로 기존 사용자가 있는지 찾아본다.
   // 이메일이 존재하고, 활성화되어 있어야 한다.
   const qUsers = await QTS.getUserByEmailAndProvider.fQuery({
     email: userInfo.email,
+    type,
     activated: true,
   });
   if (qUsers.type === 'error')

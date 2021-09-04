@@ -1,5 +1,9 @@
 import { RESPOND, VALIDTOKEN, ERROR } from '../../../lib/apiCommon'; // include String.prototype.fQuery
 
+const QTS = {
+  // Query TemplateS
+  getUBI: 'getUserById',
+};
 export default async function handler(req, res) {
   // #1. cors 해제
   res.writeHead(200, {
@@ -32,9 +36,18 @@ async function main(req, res) {
   // #3.1.2 토큰 검증
   const qToken = await VALIDTOKEN(token);
   if (qToken.type === 'error') return qToken.onError(res, '3.1.2');
-
   // #3.1.3 토큰에서 사용자 id 추출
   const { id: userId } = qToken.message;
+  // #3.1.3 사용자 id가 현재 활동중인 user인지 검증
+  const qUser = await QTS.getUBI.fQuery({ id: userId });
+  const errMsg = '유저 정보를 확인하는 중에 쿼리 에러가 발생했습니다.';
+  if (qUser.type === 'error') return qUser.onError(res, '3.1.4', errMsg, 401);
+  if (qUser.message.rows.length === 0)
+    return ERROR(res, {
+      id: 'ERR.auth.signin.3.1.4',
+      message:
+        '현재 유저정보를 확인 할 수 없습니다. 재로그인 해주시기 바랍니다.',
+    });
 
   // #3.2 처리결과를 리턴한다.
   return RESPOND(res, {

@@ -1,4 +1,5 @@
-import { RESPOND, VALIDTOKEN, ERROR } from '../../../lib/apiCommon'; // include String.prototype.fQuery
+import { RESPOND, VALIDTOKEN, ERROR } from '../../../lib/apiCommon';
+import setBaseURL from '../../../lib/pgConn'; // include String.prototype.fQuery
 
 const QTS = {
   // Query TemplateS
@@ -15,6 +16,7 @@ export default async function handler(req, res) {
   // #2. preflight 처리(OPTIONS 로 처리) :: GET일 땐 처리하지 않는다.
   // if (req.method === 'OPTIONS') return RESPOND(res, {});
   // #2. 작업
+  setBaseURL('sqls/auth/signup'); // 끝에 슬래시 붙이지 마시오.
   try {
     return await main(req, res);
   } catch (e) {

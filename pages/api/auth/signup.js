@@ -94,10 +94,10 @@ export default async function handler(req, res) {
     'Access-Control-Allow-Origin': '*', // for same origin policy
     'Content-Type': 'application/json',
     'Access-Control-Allow-Headers': 'Content-Type', // for application/json
-    'Access-Control-Allow-Methods': 'POST',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
   });
   // #2. preflight 처리
-  if (req.body.length === 0) return RESPOND(res, {});
+  if (req.method === 'OPTIONS') return RESPOND(res, {});
   // #3. 데이터 처리
   // #3.1. 비밀번호 처리 우선
   if (req.body.user_info.password)

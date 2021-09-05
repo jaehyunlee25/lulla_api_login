@@ -19,8 +19,9 @@ export default async function handler(req, res) {
     return await main(req, res);
   } catch (e) {
     return ERROR(res, {
-      id: 'ERR.auth.signup.setPassword.3',
+      id: 'ERR.auth.signup.getUserIdFromToken.1',
       message: 'server logic error',
+      name: e.toString(),
     });
   }
 }

@@ -25,13 +25,13 @@ select
 		WHEN sr.grade = 5 THEN concat(c.name,' ',k.name,'(',m.nickname,')')
 	END member_nickname
 
-from member m
+from members m
 
 left join file f on m.image_id = f.id 
 left join file bg on m.background_image_id = bg.id 
 left join class c on m.class_id = c.id
 join schools s on m.school_id = s.id 
-join school_role sr on m.school_role_id = sr.id 
+join school_roles sr on m.school_role_id = sr.id 
 join users u on u.id = m.user_id
 left join kid k on m.kid_id = k.id
 

@@ -19,6 +19,7 @@ const QTS = {
   getSamePhones: 'getSamePhones',
   getVerifyNumber: 'getVerifyNumber',
   newUser: 'newUser',
+  setInvitation: 'setInvitation',
 };
 async function procSocial(res, data) {
   // #3.3. 소셜로그인 기능을 사용한다.

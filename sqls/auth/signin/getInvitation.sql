@@ -1,7 +1,11 @@
 select 
-    *
+    i.id,
+	s.name,
+	i.role_name,
+	to_char(i.created_at, 'YYYY.MM.DD')
 from 
-    invitation
+    invitation i
+	left join schools s on s.id = i.school_id
 where
     user_id = '${userId}'
     and is_denied =false;

@@ -15,6 +15,7 @@ const QTS = {
   getUserByEmailAndProvider: 'getUserByEmailAndProvider',
   setLastLogin: 'setLastLogin',
   getUserProfiles: 'getUserProfiles',
+  getInvitation: 'getInvitation',
 };
 async function procSocial(res, data) {
   // #3.3. 소셜로그인 기능을 사용한다.
@@ -109,14 +110,20 @@ export default async function handler(req, res) {
     return qUserProfiles.onError(res, '5', 'schoolMembers');
   const schoolMembers = qUserProfiles.message.rows;
 
-  // #3.2.4.5 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.
+  // #3.2.4.5. 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.
   const token = TOKEN(USER);
 
-  // #3.2.4.6 활성화한 사용자,  토큰,  학원인원을 리턴한다.
+  // #3.2.5. 사용자의 phone 정보를 바탕으로 초대장 수신 여부를 조회한다.
+  const qGetInv = await QTS.getInvitation.fQuery({ userId: USER.id });
+  if (qGetInv.type === 'error')
+    return qGetInv.onError(res, '3.2.5', 'searching invitation');
+
+  // #3.3. 활성화한 사용자,  토큰,  학원인원을 리턴한다.
   return RESPOND(res, {
     // eslint-disable-next-line object-shorthand
     data: { user: USER, school_member: schoolMembers },
     token,
+    invitation: qGetInv.message.rows,
     resultCode: 200,
   });
 }

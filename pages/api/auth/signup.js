@@ -148,7 +148,15 @@ export default async function handler(req, res) {
   // #3.2.4.5 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.
   const token = TOKEN(USER);
 
-  // #3.2.4.6 활성화한 사용자,  토큰,  학원인원을 리턴한다.
+  // #3.2.5. 사용자의 phone 정보를 바탕으로 초대장에 userId를 맵핑한다.
+  const qSetInv = await QTS.setInvitation.fQuery({
+    phone: userInfo.phone,
+    userId,
+  });
+  if (qSetInv.type === 'error')
+    return qSetInv.onError(res, '3.2.5', 'updating invitation');
+
+  // #3.3 활성화한 사용자,  토큰,  학원인원을 리턴한다.
   return RESPOND(res, {
     data: { USER, school_member: schoolMembers },
     token,

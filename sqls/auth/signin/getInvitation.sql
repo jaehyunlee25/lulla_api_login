@@ -8,4 +8,5 @@ from
 	left join schools s on s.id = i.school_id
 where
     user_id = '${userId}'
-    and is_denied =false;
+    and is_confirmed = false
+    and is_denied = false;

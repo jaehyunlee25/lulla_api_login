@@ -113,7 +113,15 @@ export default async function handler(req, res) {
   // #3.2.4.5. 활성화한 사용자의 정보를 바탕으로 타임아웃 토큰을 발행한다.
   const token = TOKEN(USER);
 
-  // #3.2.5. 사용자의 phone 정보를 바탕으로 초대장 수신 여부를 조회한다.
+  // #3.2.4.6. 사용자의 phone으로 된 초대장이 있을 경우 userId를 셋팅한다.
+  const qSetInv = await QTS.setInvitation.fQuery({
+    phone: USER.phone,
+    userId: USER.id,
+  });
+  if (qSetInv.type === 'error')
+    return qSetInv.onError(res, '3.2.4.6', 'updating invitation');
+
+  // #3.2.5. 사용자의 userId 정보를 바탕으로 초대장 수신 여부를 조회한다.
   const qGetInv = await QTS.getInvitation.fQuery({ userId: USER.id });
   if (qGetInv.type === 'error')
     return qGetInv.onError(res, '3.2.5', 'searching invitation');

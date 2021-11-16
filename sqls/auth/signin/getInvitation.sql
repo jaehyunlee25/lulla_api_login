@@ -4,7 +4,7 @@ select
 	s.name school_name,
 	i.role_name role_name,
 	i.kid_name kid_name,
-    i.type type,
+    i.type invite_type,
 	to_char(i.created_at, 'YYYY.MM.DD') date
 from 
     invitation i
